@@ -1,0 +1,29 @@
+   -                                                                                                                         Name                        Id                                 Version   Match        Source
+--------------------------------------------------------------------------------------------
+MariaDB                     MariaDB.Server                     12.2.2.0               winget
+XAMPP 8.1                   ApacheFriends.Xampp.8.1            8.1.25-0  Tag: mariadb winget
+XAMPP 8.2                   ApacheFriends.Xampp.8.2            8.2.12-0  Tag: mariadb winget
+DDEV                        DDEVFoundation.DDEV                1.25.1    Tag: mariadb winget
+Luna Modeler                Ideamerit.LunaModeler              13.0.0    Tag: mariadb winget
+PremiumSoft Navicat Premium PremiumSoft.NavicatPremium         16.1.15   Tag: mariadb winget
+Navicat Premium Lite        PremiumSoft.NavicatPremiumLite     17.3.7    Tag: mariadb winget
+TablePlus                   TablePlus.TablePlus                6.9.2     Tag: mariadb winget
+SQL Schema Compare          TiCodeX.SQLSchemaCompare           2026.3.1  Tag: mariadb winget
+Wampserver                  Wampserver.Wampserver              3.4.0     Tag: mariadb winget
+Navicat BI                  PremiumSoft.NavicatBI              2.3.7     Tag: MariaDB winget
+Navicat BI Viewer           PremiumSoft.NavicatBIViewer        2.3.7     Tag: MariaDB winget
+Navicat Data Modeler        PremiumSoft.NavicatDataModeler     4.3.7     Tag: MariaDB winget
+Navicat Data Modeler Lite   PremiumSoft.NavicatDataModelerLite 4.3.7     Tag: MariaDB winget
+Navicat for MariaDB         PremiumSoft.NavicatMariaDB         17.3.7    Tag: MariaDB winget
+Navicat Monitor             PremiumSoft.NavicatMonitor         3.1.4     Tag: MariaDB winget
+Navicat for MySQL           PremiumSoft.NavicatMySQL           17.3.9    Tag: MariaDB winget
+Navicat On-Prem Server      PremiumSoft.NavicatOnPremServer    3.0.1     Tag: MariaDB winget
+Kangaroo MariaDB            Taozuhong.KangarooMariaDB          9.2.1.301 Tag: MariaDB winget
+Kangaroo MongoDB            Taozuhong.KangarooMongoDB          9.2.1.301 Tag: MariaDB winget
+Kangaroo Multiple           Taozuhong.KangarooMultiple         9.2.1.301 Tag: MariaDB winget
+Kangaroo MySQL              Taozuhong.KangarooMySQL            9.2.1.301 Tag: MariaDB winget
+Kangaroo Oracle             Taozuhong.KangarooOracle           9.2.1.301 Tag: MariaDB winget
+Kangaroo PostgreSQL         Taozuhong.KangarooPostgreSQL       9.2.1.301 Tag: MariaDB winget
+Kangaroo Redis              Taozuhong.KangarooRedis            9.2.1.301 Tag: MariaDB winget
+Kangaroo SQLServer          Taozuhong.KangarooSQLServer        9.2.1.301 Tag: MariaDB winget
+Kangaroo SQLite             Taozuhong.KangarooSQLite           9.2.1.301 Tag: MariaDB winget

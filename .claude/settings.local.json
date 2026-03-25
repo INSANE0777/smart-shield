@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php -v)",
+      "Bash(composer --version)",
+      "Bash(npm -v)",
+      "Bash(docker-compose:*)",
+      "Bash(docker exec:*)",
+      "Bash(curl:*)",
+      "Bash(docker restart:*)",
+      "Bash(docker compose:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(php artisan:*)",
+      "Bash(mariadb:*)",
+      "Bash(mysql:*)",
+      "Bash(docker ps:*)"
+    ]
+  }
+}

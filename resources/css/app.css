@@ -1,0 +1,98 @@
+/* Brand Color Utilities */
+.bg-brand {
+  background-color: #424da0;
+}
+
+.bg-brand-light {
+  background-color: #5a66b3;
+}
+
+.bg-brand-dark {
+  background-color: #353f87;
+}
+
+.text-brand {
+  color: #424da0;
+}
+
+.text-brand-light {
+  color: #5a66b3;
+}
+
+.text-brand-dark {
+  color: #353f87;
+}
+
+.border-brand {
+  border-color: #424da0;
+}
+
+.border-brand-light {
+  border-color: #5a66b3;
+}
+
+.border-brand-dark {
+  border-color: #353f87;
+}
+
+.hover\:bg-brand:hover {
+  background-color: #424da0;
+}
+
+.hover\:bg-brand-light:hover {
+  background-color: #5a66b3;
+}
+
+.hover\:bg-brand-dark:hover {
+  background-color: #353f87;
+}
+
+.hover\:text-brand:hover {
+  color: #424da0;
+}
+
+.focus\:border-brand:focus {
+  border-color: #424da0;
+}
+
+.focus\:ring-brand:focus {
+  --tw-ring-color: #424da0;
+}
+
+/* Extension Button Colors */
+.bg-extension {
+  background-color: #DC0073;
+}
+
+.bg-extension-dark {
+  background-color: #b8005f;
+}
+
+.text-extension {
+  color: #DC0073;
+}
+
+.border-extension {
+  border-color: #DC0073;
+}
+
+.hover\:bg-extension:hover {
+  background-color: #DC0073;
+}
+
+.hover\:bg-extension-dark:hover {
+  background-color: #b8005f;
+}
+
+/* Mobile Menu Animation */
+.mobile-menu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 0;
+}
+
+.mobile-menu.open {
+  max-height: 300px; /* Adjust based on content height */
+  opacity: 1;
+}

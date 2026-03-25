@@ -1,0 +1,104 @@
+# Robots.txt optimized for AI crawlers and search engines
+# Updated for enhanced AI search visibility
+
+User-agent: *
+Allow: /
+
+# Specific directives for AI crawlers
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 1
+
+User-agent: CCBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 1
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bard
+Allow: /
+Crawl-delay: 1
+
+User-agent: PaLM
+Allow: /
+Crawl-delay: 1
+
+User-agent: Gemini
+Allow: /
+Crawl-delay: 1
+
+# Traditional search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1
+
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Baiduspider
+Allow: /
+Crawl-delay: 2
+
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 2
+
+# Block unnecessary crawlers to preserve resources
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Allow access to important directories
+Allow: /analysis/
+Allow: /img/
+Allow: /build/
+Allow: /manifest.json
+
+# Block admin and sensitive areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /.env
+Disallow: /config/
+
+# Sitemap locations
+Sitemap: https://nullfake.com/sitemap.xml
+Sitemap: https://nullfake.com/sitemap-products.xml
+Sitemap: https://nullfake.com/sitemap-analysis.xml
+
+# Cache directive for AI crawlers
+Cache-delay: 86400
+
+# Preferred crawling times (UTC)
+Visit-time: 0200-0600
+
+# Contact information for crawler issues
+# Contact: admin@nullfake.com

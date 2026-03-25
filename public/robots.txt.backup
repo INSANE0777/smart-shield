@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Allow all search engines to crawl everything
+# No restrictions or disallowed paths
+
+# Dynamic sitemap with all analyzed products
+Sitemap: https://nullfake.com/sitemap.xml
+
+# Additional sitemap information
+# - Main sitemap includes homepage, static pages, and recent products
+# - Additional product sitemaps are generated automatically as needed
+# - All analyzed Amazon products are included for better discoverability

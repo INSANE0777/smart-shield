@@ -1,0 +1,1159 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\AsinData;
+use App\Services\Amazon\AmazonUrlService;
+use App\Services\Amazon\ReviewFetchingService;
+use App\Services\MetricsCalculationService;
+
+class ReviewAnalysisService
+{
+    private AmazonUrlService $urlService;
+    private ReviewFetchingService $fetchService;
+    private ReviewService $reviewService;
+    private OpenAIService $openAIService;
+    private MetricsCalculationService $metricsService;
+
+    public function __construct(
+        ReviewService $reviewService,
+        OpenAIService $openAIService
+    ) {
+        $this->urlService = new AmazonUrlService();
+        $this->fetchService = new ReviewFetchingService();
+        $this->reviewService = $reviewService;
+        $this->openAIService = $openAIService;
+        $this->metricsService = new MetricsCalculationService();
+    }
+
+    public function extractAsinFromUrl($url): string
+    {
+        return $this->urlService->extractAsinFromUrl($url);
+    }
+
+    private function followRedirect(string $url): string
+    {
+        // Only follow redirects for trusted domains
+        if (!preg_match('/^https?:\/\/a\.co\//', $url)) {
+            throw new \Exception('Redirect following only allowed for a.co domains');
+        }
+
+        try {
+            LoggingService::log("Following redirect for URL: {$url}");
+
+            // Track redirects manually using on_redirect callback
+            $redirectUrls = [];
+            $client = new \GuzzleHttp\Client([
+                'timeout'         => 10,
+                'allow_redirects' => [
+                    'max'         => 5,
+                    'strict'      => true,
+                    'referer'     => true,
+                    'on_redirect' => function ($request, $response, $uri) use (&$redirectUrls) {
+                        $redirectUrls[] = (string) $uri;
+                    },
+                ],
+                'headers' => [
+                    'User-Agent'                => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                    'Accept'                    => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Language'           => 'en-US,en;q=0.5',
+                    'Accept-Encoding'           => 'gzip, deflate',
+                    'Connection'                => 'keep-alive',
+                    'Upgrade-Insecure-Requests' => '1',
+                ],
+            ]);
+
+            $response = $client->get($url);
+            $finalUrl = !empty($redirectUrls) ? end($redirectUrls) : $url;
+
+            LoggingService::log('Redirect resolved', [
+                'original_url'   => $url,
+                'final_url'      => $finalUrl,
+                'status_code'    => $response->getStatusCode(),
+                'redirect_chain' => $redirectUrls,
+            ]);
+
+            // Verify the redirect goes to Amazon
+            if (preg_match('/^https?:\/\/(?:www\.)?amazon\.(com|co\.uk|ca|com\.au|de|fr|it|es|in|co\.jp|com\.mx|com\.br|nl|sg|com\.tr|ae|sa|se|pl|eg|be)/', $finalUrl)) {
+                return $finalUrl;
+            } else {
+                throw new \Exception('Redirect does not lead to Amazon domain: '.$finalUrl);
+            }
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            LoggingService::log('Redirect following failed: '.$e->getMessage());
+
+            throw new \Exception('Failed to follow redirect: '.$e->getMessage());
+        } catch (\Exception $e) {
+            LoggingService::log('Redirect following failed: '.$e->getMessage());
+
+            throw new \Exception('Failed to follow redirect: '.$e->getMessage());
+        }
+    }
+
+    public function analyzeProduct(string $asin, string $country = 'us'): array
+    {
+        LoggingService::log('=== ANALYZE METHOD STARTED ===');
+
+        try {
+            // Handle both URL string and direct ASIN inputs
+            if (is_string($asin)) {
+                $asin = $this->extractAsinFromUrl($asin);
+                $country = 'us'; // Default country
+                $productUrl = "https://www.amazon.com/dp/{$asin}";
+
+                // Step 1: Check if analysis already exists in database
+                $asinData = AsinData::where('asin', $asin)->where('country', $country)->first();
+
+                if (!$asinData) {
+                    LoggingService::log('Product not found in database, starting fetch process for ASIN: '.$asin);
+                    LoggingService::log('Progress: 1/4 - Gathering Amazon reviews...');
+
+                    // Step 2: Fetch reviews from Amazon
+                    $asinData = $this->fetchService->fetchReviewsAndSave($asin, $country, $productUrl);
+
+                    if (!$asinData) {
+                        throw new \Exception("This product (ASIN: {$asin}) does not exist on Amazon US. Please verify the product URL and ensure it's available on amazon.com.");
+                    }
+
+                    LoggingService::log('Gathered '.count($asinData->getReviewsArray()).' reviews, now sending to OpenAI for analysis');
+
+                    // Step 4: Analyze with OpenAI and update the same record
+                    $openaiResult = $this->openAIService->analyzeReviews($asinData->getReviewsArray());
+
+                    // Step 5: Update the record with OpenAI analysis
+                    $asinData->update([
+                        'openai_result' => json_encode($openaiResult),
+                        'status'        => 'completed',
+                        'first_analyzed_at' => now(),
+                        'last_analyzed_at'  => now(),
+                    ]);
+
+                    LoggingService::log('Updated database record with OpenAI analysis results');
+                } else {
+                    LoggingService::log("Found existing analysis in database for ASIN: {$asin}");
+
+                    // Check if OpenAI analysis is missing and complete it if needed
+                    if (!$asinData->openai_result) {
+                        LoggingService::log("OpenAI analysis missing, completing analysis for ASIN: {$asin}");
+
+                        $reviews = $asinData->getReviewsArray();
+                        if (empty($reviews)) {
+                            LoggingService::log("Product has no reviews to analyze, setting default analysis results for ASIN: {$asin}");
+                            
+                            // Set default analysis for products with no reviews
+                            $defaultResult = [
+                                'detailed_scores' => [],
+                                'analysis_provider' => 'system',
+                                'total_cost' => 0.0
+                            ];
+                            
+                            $asinData->update([
+                                'openai_result' => json_encode($defaultResult),
+                                'status' => 'completed',
+                                'first_analyzed_at' => $asinData->first_analyzed_at ?? now(),
+                                'last_analyzed_at'  => now(),
+                            ]);
+                            
+                            $asinData = $asinData->fresh();
+                        } else {
+                            LoggingService::logProgress('Completing analysis', 'Analyzing reviews with OpenAI...');
+                            $openaiResult = $this->openAIService->analyzeReviews($reviews);
+
+                            $asinData->update([
+                                'openai_result' => json_encode($openaiResult),
+                                'status'        => 'completed',
+                                'first_analyzed_at' => $asinData->first_analyzed_at ?? now(),
+                                'last_analyzed_at'  => now(),
+                            ]);
+
+                            LoggingService::log("Completed missing OpenAI analysis for ASIN: {$asin}");
+
+                            // Refresh the model to get updated data
+                            $asinData = $asinData->fresh();
+                        }
+                    }
+                }
+            } else {
+                // Input is already an AsinData object
+                $asinData = $asin;
+            }
+
+            // Step 6: Calculate final metrics from the data
+            if (!$asinData->openai_result) {
+                throw new \Exception('No OpenAI analysis data available for this product');
+            }
+
+            // Calculate metrics directly from the data
+            $openaiResult = $asinData->openai_result;
+            if (is_string($openaiResult)) {
+                $openaiResult = json_decode($openaiResult, true);
+            }
+
+            $detailedScores = $openaiResult['detailed_scores'] ?? [];
+            $reviews = $asinData->getReviewsArray();
+
+            $totalReviews = count($reviews);
+            $fakeCount = 0;
+            $amazonRatingSum = 0;
+            $genuineRatingSum = 0;
+            $genuineCount = 0;
+
+            LoggingService::log('=== STARTING CALCULATION DEBUG ===');
+            LoggingService::log("Total reviews found: {$totalReviews}");
+            LoggingService::log('Detailed scores count: '.count($detailedScores));
+
+            $fakeReviews = [];
+            $genuineReviews = [];
+
+            foreach ($reviews as $review) {
+                $reviewId = $review['id'];
+                $rating = $review['rating'];
+                $amazonRatingSum += $rating;
+
+                $fakeScore = $detailedScores[$reviewId] ?? 0;
+
+                if ($fakeScore >= 85) {
+                    $fakeCount++;
+                    $fakeReviews[] = [
+                        'id'         => $reviewId,
+                        'rating'     => $rating,
+                        'fake_score' => $fakeScore,
+                    ];
+                    LoggingService::log("FAKE REVIEW: ID={$reviewId}, Rating={$rating}, Score={$fakeScore}");
+                } else {
+                    $genuineRatingSum += $rating;
+                    $genuineCount++;
+                    $genuineReviews[] = [
+                        'id'         => $reviewId,
+                        'rating'     => $rating,
+                        'fake_score' => $fakeScore,
+                    ];
+                }
+            }
+
+            LoggingService::log('=== FAKE REVIEWS SUMMARY ===');
+            LoggingService::log("Total fake reviews: {$fakeCount}");
+            foreach ($fakeReviews as $fake) {
+                LoggingService::log("Fake: {$fake['id']} - Rating: {$fake['rating']} - Score: {$fake['fake_score']}");
+            }
+
+            LoggingService::log('=== GENUINE REVIEWS SUMMARY ===');
+            LoggingService::log("Total genuine reviews: {$genuineCount}");
+            $genuineRatingCounts = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0];
+            foreach ($genuineReviews as $genuine) {
+                $genuineRatingCounts[$genuine['rating']]++;
+            }
+            foreach ($genuineRatingCounts as $rating => $count) {
+                LoggingService::log("Genuine {$rating}-star reviews: {$count}");
+            }
+
+            $fakePercentage = $totalReviews > 0 ? ($fakeCount / $totalReviews) * 100 : 0;
+            $amazonRating = $totalReviews > 0 ? $amazonRatingSum / $totalReviews : 0;
+            $adjustedRating = $this->calculateAdjustedRating($genuineReviews);
+
+            LoggingService::log('=== FINAL CALCULATIONS ===');
+            LoggingService::log("Amazon rating sum: {$amazonRatingSum}");
+            LoggingService::log("Amazon rating average: {$amazonRating}");
+            LoggingService::log("Genuine rating sum: {$genuineRatingSum}");
+            LoggingService::log("Genuine rating average: {$adjustedRating}");
+            LoggingService::log("Fake percentage: {$fakePercentage}%");
+
+            $grade = $this->calculateGrade($fakePercentage);
+            $explanation = $this->generateExplanation($totalReviews, $fakeCount, $fakePercentage);
+
+            // Update the database with calculated values
+            $asinData->update([
+                'fake_percentage' => round($fakePercentage, 1),
+                'amazon_rating'   => round($amazonRating, 2),
+                'adjusted_rating' => round($adjustedRating, 2),
+                'grade'           => $grade,
+                'explanation'     => $explanation,
+            ]);
+
+            return [
+                'fake_percentage' => round($fakePercentage, 1),
+                'amazon_rating'   => round($amazonRating, 2),
+                'adjusted_rating' => round($adjustedRating, 2),
+                'grade'           => $grade,
+                'explanation'     => $explanation,
+                'total_reviews'   => $totalReviews,
+                'asin_review'     => $asinData->fresh(),
+            ];
+        } catch (\Exception $e) {
+            $userMessage = LoggingService::handleException($e);
+
+            throw new \Exception($userMessage);
+        }
+    }
+
+    private function calculateGrade($fakePercentage): string
+    {
+        return \App\Services\GradeCalculationService::calculateGrade($fakePercentage);
+    }
+
+    private function generateExplanation($totalReviews, $fakeCount, $fakePercentage): string
+    {
+        return "Analysis of {$totalReviews} reviews found {$fakeCount} potentially fake reviews (".round($fakePercentage, 1).'%). '.
+               ($fakePercentage <= 10 ? 'This product has very low fake review activity and appears highly trustworthy.' :
+               ($fakePercentage <= 20 ? 'This product has low fake review activity and appears trustworthy.' :
+               ($fakePercentage <= 35 ? 'This product has moderate fake review activity. Exercise some caution.' :
+               ($fakePercentage <= 50 ? 'This product has high fake review activity. Exercise caution when purchasing.' :
+                'This product has very high fake review activity. We recommend avoiding this product.'))));
+    }
+
+    /**
+     * Calculate adjusted rating based on genuine reviews only.
+     */
+    private function calculateAdjustedRating(array $genuineReviews): float
+    {
+        if (empty($genuineReviews)) {
+            return 0;
+        }
+
+        $totalRating = array_sum(array_column($genuineReviews, 'rating'));
+        $adjustedRating = $totalRating / count($genuineReviews);
+
+        return round($adjustedRating, 2);
+    }
+
+    /**
+     * Phase 1: Extract ASIN and check if product exists in database.
+     */
+    public function checkProductExists(string $productUrl): array
+    {
+        $asin = $this->urlService->extractAsinFromUrl($productUrl);
+        $country = $this->urlService->extractCountryFromUrl($productUrl);
+        $normalizedUrl = $this->urlService->buildProductUrl($asin, $country);
+
+        $asinData = AsinData::where('asin', $asin)->where('country', $country)->first();
+
+        return [
+            'asin'           => $asin,
+            'country'        => $country,
+            'product_url'    => $normalizedUrl,
+            'exists'         => $asinData !== null,
+            'asin_data'      => $asinData,
+            'needs_fetching' => $asinData === null,
+            'needs_openai'   => $asinData === null || !$asinData->openai_result,
+        ];
+    }
+
+    /**
+     * Phase 2: Fetch reviews from Amazon (if needed).
+     */
+    public function fetchReviews(string $asin, string $country, string $productUrl): AsinData
+    {
+        $asinData = $this->fetchService->fetchReviews($asin, $country, $productUrl);
+
+        // Queue product data scraping job if not already scraped
+        if (!$asinData->have_product_data) {
+            LoggingService::log('Queuing product data scraping job', [
+                'asin' => $asin,
+                'asin_data_id' => $asinData->id,
+            ]);
+            
+            \App\Jobs\ScrapeAmazonProductData::dispatch($asinData);
+        }
+
+        return $asinData;
+    }
+
+    /**
+     * Phase 3: Analyze reviews with LLM (using multi-provider system).
+     */
+    public function analyzeWithOpenAI(AsinData $asinData): AsinData
+    {
+        $reviews = $asinData->getReviewsArray();
+
+        if (empty($reviews)) {
+            LoggingService::log("Product has no reviews to analyze, setting default analysis results for ASIN: {$asinData->asin}");
+            
+            // Set default analysis for products with no reviews
+            $defaultResult = [
+                'detailed_scores' => [],
+                'analysis_provider' => 'system',
+                'total_cost' => 0.0
+            ];
+            
+            $asinData->update([
+                'openai_result' => json_encode($defaultResult),
+                'detailed_analysis' => [],
+                'fake_review_examples' => [],
+                'status' => 'completed',
+                'first_analyzed_at' => $asinData->first_analyzed_at ?? now(),
+                'last_analyzed_at'  => now(),
+            ]);
+
+            return $asinData;
+        }
+
+        LoggingService::log('Sending '.count($reviews).' reviews to LLM for analysis');
+
+        try {
+            // Use the new LLM service manager for multi-provider support
+            $llmManager = app(LLMServiceManager::class);
+            $result = $llmManager->analyzeReviews($reviews);
+            
+            // Extract fake review examples for transparency
+            $fakeExamples = $this->extractFakeReviewExamples($result, $reviews);
+            
+            $asinData->update([
+                'openai_result' => json_encode($result),
+                'detailed_analysis' => $result['detailed_scores'] ?? [],
+                'fake_review_examples' => $fakeExamples,
+                'status' => 'completed',
+                'first_analyzed_at' => $asinData->first_analyzed_at ?? now(),
+                'last_analyzed_at'  => now(),
+            ]);
+
+            LoggingService::log('Updated database record with enhanced LLM analysis results including transparency data');
+
+        } catch (\Exception $e) {
+            LoggingService::log('LLM analysis failed, using fallback analysis', ['error' => $e->getMessage()]);
+            
+            // Check if it's a quota/billing issue
+            if (str_contains($e->getMessage(), 'quota') || str_contains($e->getMessage(), '429') || str_contains($e->getMessage(), 'All LLM providers failed')) {
+                LoggingService::log('All LLM providers failed, applying heuristic fallback analysis');
+                $fallbackResult = $this->generateFallbackAnalysis($reviews);
+                
+                $asinData->update([
+                    'openai_result' => json_encode($fallbackResult),
+                    'status'        => 'completed_fallback',
+                    'analysis_notes' => 'Analysis completed using heuristic fallback due to LLM provider failures'
+                ]);
+
+                LoggingService::log('Updated database record with fallback analysis results');
+            } else {
+                // Re-throw other types of errors
+                throw $e;
+            }
+        }
+
+        return $asinData->fresh();
+    }
+
+    /**
+     * Phase 4: Calculate final metrics and grades.
+     */
+    public function calculateFinalMetrics(AsinData $asinData): array
+    {
+        return $this->metricsService->calculateFinalMetrics($asinData);
+    }
+
+    /**
+     * Remove old private methods that are now handled by dedicated services
+     */
+    private function followRedirect(string $url): string
+    {
+        return $this->urlService->followRedirect($url);
+    }
+
+    /**
+        $openaiResult = $asinData->openai_result;
+        if (is_string($openaiResult)) {
+            $openaiResult = json_decode($openaiResult, true);
+        }
+
+        $detailedScores = $openaiResult['detailed_scores'] ?? [];
+        $reviews = $asinData->getReviewsArray();
+
+        $totalReviews = count($reviews);
+        $fakeCount = 0;
+        $amazonRatingSum = 0;
+        $genuineReviews = [];
+
+        LoggingService::log('=== STARTING CALCULATION DEBUG ===');
+        LoggingService::log("Total reviews found: {$totalReviews}");
+        LoggingService::log('Detailed scores count: '.count($detailedScores));
+
+        // Optimized single-pass calculation
+        foreach ($reviews as $review) {
+            $reviewId = $review['id'];
+            $rating = $review['rating'];
+            $amazonRatingSum += $rating;
+
+            $fakeScore = $detailedScores[$reviewId] ?? 0;
+
+            if ($fakeScore >= 85) {
+                $fakeCount++;
+                if ($fakeCount <= 8) { // Only log first 8 fake reviews to reduce log spam
+                    LoggingService::log("FAKE REVIEW: ID={$reviewId}, Rating={$rating}, Score={$fakeScore}");
+                }
+            } else {
+                $genuineReviews[] = [
+                    'id'         => $reviewId,
+                    'rating'     => $rating,
+                    'fake_score' => $fakeScore,
+                ];
+            }
+        }
+
+        LoggingService::log('=== FAKE REVIEWS SUMMARY ===');
+        LoggingService::log("Total fake reviews: {$fakeCount}");
+
+        LoggingService::log('=== GENUINE REVIEWS SUMMARY ===');
+        LoggingService::log("Total genuine reviews: ".count($genuineReviews));
+        
+        // Optimized rating count calculation
+        $genuineRatingCounts = array_count_values(array_column($genuineReviews, 'rating'));
+        for ($rating = 1; $rating <= 5; $rating++) {
+            $count = $genuineRatingCounts[$rating] ?? 0;
+            LoggingService::log("Genuine {$rating}-star reviews: {$count}");
+        }
+
+        $fakePercentage = $totalReviews > 0 ? ($fakeCount / $totalReviews) * 100 : 0;
+        $amazonRating = $totalReviews > 0 ? $amazonRatingSum / $totalReviews : 0;
+        $adjustedRating = $this->calculateAdjustedRating($genuineReviews);
+
+        LoggingService::log('=== FINAL CALCULATIONS ===');
+        LoggingService::log("Amazon rating sum: {$amazonRatingSum}");
+        LoggingService::log("Amazon rating average: {$amazonRating}");
+        LoggingService::log("Genuine rating average: {$adjustedRating}");
+        LoggingService::log("Fake percentage: {$fakePercentage}%");
+
+        $grade = $this->calculateGrade($fakePercentage);
+        $explanation = $this->generateExplanation($totalReviews, $fakeCount, $fakePercentage);
+
+        // Update the database with calculated values
+        $asinData->update([
+            'fake_percentage' => round($fakePercentage, 1),
+            'amazon_rating'   => round($amazonRating, 2),
+            'adjusted_rating' => round($adjustedRating, 2),
+            'grade'           => $grade,
+            'explanation'     => $explanation,
+        ]);
+
+        // Clear sitemap cache since we have a new analyzed product
+        \App\Http\Controllers\SitemapController::clearCache();
+
+        return [
+            'fake_percentage' => round($fakePercentage, 1),
+            'amazon_rating'   => round($amazonRating, 2),
+            'adjusted_rating' => round($adjustedRating, 2),
+            'grade'           => $grade,
+            'explanation'     => $explanation,
+            'total_reviews'   => $totalReviews,
+            'asin_review'     => $asinData->fresh(),
+        ];
+    }
+
+    /**
+     * Generate a basic heuristic analysis when OpenAI is unavailable
+     */
+    private function generateFallbackAnalysis(array $reviews): array
+    {
+        LoggingService::log('Generating heuristic fallback analysis for '.count($reviews).' reviews');
+        
+        $results = [];
+        
+        foreach ($reviews as $review) {
+            $score = $this->calculateHeuristicFakeScore($review);
+            $results[] = [
+                'id' => $review['id'] ?? uniqid(),
+                'score' => $score
+            ];
+        }
+        
+        $summary = $this->generateFallbackSummary($reviews, $results);
+        
+        return [
+            'detailed_scores' => array_column($results, 'score', 'id'),
+            'results' => $results,
+            'summary' => $summary,
+            'analysis_type' => 'heuristic_fallback',
+            'fallback_reason' => 'OpenAI quota exceeded'
+        ];
+    }
+
+    /**
+     * Calculate a heuristic fake review score based on common patterns
+     */
+    private function calculateHeuristicFakeScore(array $review): int
+    {
+        $score = 20; // Base score - assume most reviews are somewhat genuine
+        
+        $text = $review['text'] ?? $review['review_text'] ?? '';
+        $rating = (int)($review['rating'] ?? 3);
+        
+        // Length-based scoring
+        $textLength = strlen($text);
+        if ($textLength < 20) {
+            $score += 30; // Very short reviews are suspicious
+        } elseif ($textLength < 50) {
+            $score += 15; // Short reviews are somewhat suspicious
+        } elseif ($textLength > 500) {
+            $score -= 10; // Very detailed reviews are less likely fake
+        }
+        
+        // Rating-based scoring
+        if ($rating == 5) {
+            $score += 10; // 5-star reviews are more often fake
+        } elseif ($rating == 1) {
+            $score += 5; // 1-star reviews can be fake attacks
+        } elseif ($rating == 3 || $rating == 4) {
+            $score -= 5; // More balanced ratings are less suspicious
+        }
+        
+        // Content pattern analysis
+        $lowerText = strtolower($text);
+        
+        // Generic positive patterns
+        $genericPhrases = [
+            'great product', 'highly recommend', 'best ever', 'amazing quality',
+            'love it', 'perfect', 'exactly as described', 'fast shipping'
+        ];
+        
+        $genericCount = 0;
+        foreach ($genericPhrases as $phrase) {
+            if (str_contains($lowerText, $phrase)) {
+                $genericCount++;
+            }
+        }
+        
+        if ($genericCount >= 3) {
+            $score += 25; // Too many generic phrases
+        } elseif ($genericCount >= 2) {
+            $score += 15;
+        }
+        
+        // Excessive punctuation or capitals
+        if (preg_match('/[!]{3,}/', $text) || preg_match('/[A-Z]{5,}/', $text)) {
+            $score += 10;
+        }
+        
+        // Very promotional language
+        $promotionalTerms = ['buy', 'purchase', 'deal', 'price', 'money', 'worth'];
+        $promotionalCount = 0;
+        foreach ($promotionalTerms as $term) {
+            if (str_contains($lowerText, $term)) {
+                $promotionalCount++;
+            }
+        }
+        
+        if ($promotionalCount >= 3) {
+            $score += 15;
+        }
+        
+        // Specific product mentions (often genuine)
+        if (preg_match('/\b(color|size|material|weight|dimension)\b/', $lowerText)) {
+            $score -= 10;
+        }
+        
+        // Personal experience indicators (often genuine)
+        $personalTerms = ['i', 'my', 'me', 'family', 'wife', 'husband', 'kids'];
+        $personalCount = 0;
+        foreach ($personalTerms as $term) {
+            if (str_contains($lowerText, ' '.$term.' ')) {
+                $personalCount++;
+            }
+        }
+        
+        if ($personalCount >= 3) {
+            $score -= 15;
+        }
+        
+        // Ensure score is within bounds
+        return max(0, min(100, $score));
+    }
+
+    /**
+     * Generate a summary for fallback analysis
+     */
+    private function generateFallbackSummary(array $reviews, array $results): string
+    {
+        $totalReviews = count($reviews);
+        $scores = array_column($results, 'score');
+        $avgScore = round(array_sum($scores) / count($scores), 1);
+        
+        $suspicious = count(array_filter($scores, fn($s) => $s >= 60));
+        $likely = count(array_filter($scores, fn($s) => $s >= 40 && $s < 60));
+        $genuine = count(array_filter($scores, fn($s) => $s < 40));
+        
+        $suspiciousPercent = round(($suspicious / $totalReviews) * 100, 1);
+        
+        return "Heuristic Analysis: {$totalReviews} reviews analyzed. ".
+               "Average fake score: {$avgScore}/100. ".
+               "Distribution: {$genuine} likely genuine, {$likely} questionable, {$suspicious} suspicious ({$suspiciousPercent}% suspicious). ".
+               "Note: This is a basic analysis due to OpenAI quota limits. Results may be less accurate than AI analysis.";
+    }
+
+    /**
+     * Extract examples of fake reviews with detailed explanations for transparency
+     */
+    private function extractFakeReviewExamples(array $result, array $reviews): array
+    {
+        $fakeExamples = [];
+        $detailedScores = $result['detailed_scores'] ?? [];
+        
+        // Create a lookup map for reviews by ID
+        $reviewsById = [];
+        foreach ($reviews as $review) {
+            $reviewsById[$review['id']] = $review;
+        }
+        
+        // Find high-scoring fake reviews (85+) with good explanations
+        $highFakeReviews = array_filter($detailedScores, function($analysis) {
+            return ($analysis['score'] ?? 0) >= 85 && !empty($analysis['explanation']);
+        });
+        
+        // Sort by score (highest first) and take top 5 examples
+        usort($highFakeReviews, function($a, $b) {
+            return ($b['score'] ?? 0) <=> ($a['score'] ?? 0);
+        });
+        
+        $exampleCount = 0;
+        foreach ($highFakeReviews as $analysis) {
+            if ($exampleCount >= 5) break; // Limit to 5 examples
+            
+            $reviewId = $analysis['id'];
+            if (!isset($reviewsById[$reviewId])) continue;
+            
+            $review = $reviewsById[$reviewId];
+            $reviewText = $review['review_text'] ?? $review['text'] ?? '';
+            
+            // Skip very short reviews for examples
+            if (strlen($reviewText) < 50) continue;
+            
+            $fakeExamples[] = [
+                'review_id' => $reviewId,
+                'score' => $analysis['score'],
+                'confidence' => $analysis['analysis_details']['confidence'] ?? 'medium',
+                'review_text' => substr($reviewText, 0, 500), // Truncate for display
+                'rating' => $review['rating'] ?? 5,
+                'verified_purchase' => $review['meta_data']['verified_purchase'] ?? false,
+                'explanation' => $analysis['explanation'],
+                'red_flags' => $analysis['red_flags'] ?? [],
+                'provider' => $analysis['analysis_details']['provider'] ?? 'unknown',
+                'model' => $analysis['analysis_details']['model'] ?? 'unknown'
+            ];
+            
+            $exampleCount++;
+        }
+        
+        LoggingService::log('Extracted ' . count($fakeExamples) . ' fake review examples for transparency display');
+        
+        return $fakeExamples;
+    }
+
+    /**
+     * Enhanced Analysis for GitHub Issue #31
+     * Performs keyword analysis, timeline patterns, and vocabulary diversity assessment
+     */
+    public function performEnhancedAnalysis(AsinData $asinData): array
+    {
+        LoggingService::log('Starting enhanced analysis for Issue #31 - ASIN: ' . $asinData->asin);
+        
+        $reviews = $asinData->getReviewsArray();
+        if (empty($reviews)) {
+            return ['error' => 'No reviews found for enhanced analysis'];
+        }
+
+        // Get existing analysis data (try detailed_analysis first, fallback to openai_result, then proceed without)
+        $detailedAnalysis = $asinData->detailed_analysis ?? [];
+        if (empty($detailedAnalysis)) {
+            LoggingService::log('No detailed analysis found, checking openai_result');
+            $openaiResult = $asinData->openai_result;
+            if (is_string($openaiResult)) {
+                $openaiResult = json_decode($openaiResult, true);
+            }
+            $detailedAnalysis = $openaiResult['detailed_scores'] ?? [];
+            
+            if (empty($detailedAnalysis)) {
+                LoggingService::log('No individual review scores found, proceeding with aggregate analysis only');
+                // We can still do enhanced analysis on review text patterns and timeline
+            }
+        }
+
+        // Perform enhanced analyses
+        $keywordAnalysis = $this->analyzeKeywordPatterns($reviews, $detailedAnalysis);
+        $timelineAnalysis = $this->analyzeReviewTimeline($reviews);
+        $vocabularyAnalysis = $this->analyzeVocabularyDiversity($reviews);
+        
+        // Generate enhanced summary with existing scoring system
+        $enhancedSummary = $this->generateEnhancedSummary(
+            $asinData,
+            $keywordAnalysis,
+            $timelineAnalysis,
+            $vocabularyAnalysis
+        );
+
+        $result = [
+            'enhanced_analysis_v2' => [
+                'keyword_analysis' => $keywordAnalysis,
+                'timeline_analysis' => $timelineAnalysis,
+                'vocabulary_analysis' => $vocabularyAnalysis,
+                'enhanced_summary' => $enhancedSummary,
+                'github_issue' => '#31',
+                'analysis_timestamp' => now()->toISOString()
+            ]
+        ];
+
+        // Store enhanced analysis
+        $asinData->update([
+            'analysis_notes' => json_encode($result)
+        ]);
+
+        LoggingService::log('Enhanced analysis completed for Issue #31');
+        return $result;
+    }
+
+    /**
+     * Analyze keyword patterns and authenticity markers
+     */
+    private function analyzeKeywordPatterns(array $reviews, array $detailedAnalysis): array
+    {
+        $allText = implode(' ', array_column($reviews, 'review_text'));
+        $words = str_word_count(strtolower($allText), 1);
+        
+        // Common fake review phrases
+        $suspiciousPhrases = [
+            'highly recommend', 'amazing product', 'best purchase', 'five stars',
+            'must buy', 'great quality', 'love it', 'perfect', 'excellent'
+        ];
+        
+        $naturalPhrases = [
+            'after using', 'compared to', 'fits perfectly', 'works well with',
+            'shipping was', 'arrived quickly', 'for the price', 'would recommend'
+        ];
+
+        $criticalPhrases = [
+            'waste of money', 'poor quality', 'broke after', 'not as described',
+            'disappointed', 'returning', 'defective', 'cheap material'
+        ];
+
+        // Count phrase occurrences
+        $suspiciousCount = $this->countPhraseOccurrences($allText, $suspiciousPhrases);
+        $naturalCount = $this->countPhraseOccurrences($allText, $naturalPhrases);
+        $criticalCount = $this->countPhraseOccurrences($allText, $criticalPhrases);
+
+        // Calculate vocabulary diversity (unique words / total words)
+        $uniqueWords = array_unique($words);
+        $diversityRatio = count($uniqueWords) / max(1, count($words));
+
+        return [
+            'phrase_patterns' => [
+                'suspicious_phrases' => $suspiciousCount,
+                'natural_phrases' => $naturalCount,
+                'critical_phrases' => $criticalCount,
+                'suspicious_ratio' => round($suspiciousCount / max(1, count($reviews)), 2)
+            ],
+            'vocabulary_diversity' => [
+                'total_words' => count($words),
+                'unique_words' => count($uniqueWords),
+                'diversity_ratio' => round($diversityRatio, 3),
+                'diversity_score' => min(10, round($diversityRatio * 20, 1)) // Scale to 1-10
+            ],
+            'authenticity_indicators' => [
+                'natural_language_flow' => $this->assessLanguageFlow($reviews),
+                'specific_details_ratio' => $this->calculateSpecificDetailsRatio($reviews),
+                'balanced_sentiment' => $this->assessSentimentBalance($reviews)
+            ]
+        ];
+    }
+
+    /**
+     * Analyze review timeline for manipulation patterns
+     */
+    private function analyzeReviewTimeline(array $reviews): array
+    {
+        $timeline = [];
+        $reviewsByDate = [];
+
+        // Group reviews by date
+        foreach ($reviews as $review) {
+            $date = $review['date'] ?? $review['review_date'] ?? date('Y-m-d');
+            if (!isset($reviewsByDate[$date])) {
+                $reviewsByDate[$date] = 0;
+            }
+            $reviewsByDate[$date]++;
+        }
+
+        ksort($reviewsByDate);
+
+        // Detect spikes (days with >3x average reviews)
+        $values = array_values($reviewsByDate);
+        $average = array_sum($values) / max(1, count($values));
+        $spikes = [];
+
+        foreach ($reviewsByDate as $date => $count) {
+            if ($count > ($average * 3) && $count > 5) {
+                $spikes[] = [
+                    'date' => $date,
+                    'review_count' => $count,
+                    'spike_ratio' => round($count / $average, 1)
+                ];
+            }
+        }
+
+        // Calculate review velocity pattern
+        $firstDate = min(array_keys($reviewsByDate));
+        $lastDate = max(array_keys($reviewsByDate));
+        $daysDiff = max(1, (strtotime($lastDate) - strtotime($firstDate)) / 86400);
+        $reviewVelocity = count($reviews) / $daysDiff;
+
+        return [
+            'timeline_data' => $reviewsByDate,
+            'suspicious_spikes' => $spikes,
+            'spike_count' => count($spikes),
+            'review_velocity' => round($reviewVelocity, 2),
+            'date_range' => [
+                'first_review' => $firstDate,
+                'last_review' => $lastDate,
+                'days_span' => round($daysDiff)
+            ],
+            'manipulation_risk' => $this->assessManipulationRisk($spikes, $reviewVelocity, count($reviews))
+        ];
+    }
+
+    /**
+     * Analyze vocabulary diversity across reviews
+     */
+    private function analyzeVocabularyDiversity(array $reviews): array
+    {
+        $reviewTexts = [];
+        $vocabularyMetrics = [];
+
+        foreach ($reviews as $review) {
+            $text = strtolower($review['review_text'] ?? $review['text'] ?? '');
+            $words = str_word_count($text, 1);
+            
+            $reviewTexts[] = $text;
+            $vocabularyMetrics[] = [
+                'word_count' => count($words),
+                'unique_words' => count(array_unique($words)),
+                'diversity' => count($words) > 0 ? count(array_unique($words)) / count($words) : 0
+            ];
+        }
+
+        // Calculate similarity between reviews
+        $similarities = $this->calculateTextSimilarities($reviewTexts);
+        
+        $avgDiversity = array_sum(array_column($vocabularyMetrics, 'diversity')) / max(1, count($vocabularyMetrics));
+        $avgWordCount = array_sum(array_column($vocabularyMetrics, 'word_count')) / max(1, count($vocabularyMetrics));
+
+        return [
+            'average_diversity' => round($avgDiversity, 3),
+            'average_word_count' => round($avgWordCount, 1),
+            'diversity_score' => min(10, round($avgDiversity * 15, 1)),
+            'similarity_analysis' => $similarities,
+            'vocabulary_health' => $this->assessVocabularyHealth($avgDiversity, $similarities)
+        ];
+    }
+
+    /**
+     * Generate enhanced summary with pros/cons analysis
+     */
+    private function generateEnhancedSummary(AsinData $asinData, array $keyword, array $timeline, array $vocabulary): array
+    {
+        $pros = [];
+        $cons = [];
+        $overallScore = $asinData->fake_percentage ? (100 - $asinData->fake_percentage) : 75;
+
+        // Analyze pros based on patterns
+        if ($vocabulary['diversity_score'] >= 7) {
+            $pros[] = "High vocabulary diversity indicates natural, varied authorship";
+        }
+        if ($timeline['spike_count'] === 0) {
+            $pros[] = "Natural review timing with no suspicious activity spikes";
+        }
+        if ($keyword['phrase_patterns']['natural_phrases'] > $keyword['phrase_patterns']['suspicious_phrases']) {
+            $pros[] = "Natural language patterns dominate over generic phrases";
+        }
+        if ($keyword['authenticity_indicators']['balanced_sentiment'] > 0.6) {
+            $pros[] = "Reviews show balanced sentiment with both positive and critical feedback";
+        }
+
+        // Analyze cons based on patterns
+        if ($vocabulary['diversity_score'] < 4) {
+            $cons[] = "Low vocabulary diversity suggests potential template usage or coordination";
+        }
+        if ($timeline['spike_count'] > 2) {
+            $cons[] = "Multiple suspicious review spikes detected indicating possible manipulation";
+        }
+        if ($keyword['phrase_patterns']['suspicious_ratio'] > 0.8) {
+            $cons[] = "High ratio of generic promotional phrases across reviews";
+        }
+        if ($timeline['manipulation_risk'] === 'high') {
+            $cons[] = "Timeline patterns suggest coordinated review manipulation";
+        }
+
+        // Adjust overall score based on enhanced analysis
+        $adjustmentFactor = 0;
+        $adjustmentFactor += ($vocabulary['diversity_score'] - 5) * 2; // -10 to +10
+        $adjustmentFactor += ($timeline['spike_count'] * -5); // Penalty for spikes
+        $adjustmentFactor += (($keyword['phrase_patterns']['natural_phrases'] - $keyword['phrase_patterns']['suspicious_phrases']) * 0.5);
+
+        $enhancedScore = max(0, min(100, $overallScore + $adjustmentFactor));
+        $enhancedGrade = $this->scoreToGrade($enhancedScore);
+
+        return [
+            'enhanced_score' => round($enhancedScore, 1),
+            'enhanced_grade' => $enhancedGrade,
+            'original_score' => $overallScore,
+            'adjustment_factor' => round($adjustmentFactor, 1),
+            'pros' => $pros,
+            'cons' => $cons,
+            'summary_text' => $this->buildSummaryText($enhancedGrade, $pros, $cons, $keyword, $timeline, $vocabulary),
+            'trust_recommendation' => $this->generateTrustRecommendation($enhancedScore, $pros, $cons)
+        ];
+    }
+
+    // Helper methods
+    private function countPhraseOccurrences(string $text, array $phrases): int
+    {
+        $text = strtolower($text);
+        $count = 0;
+        foreach ($phrases as $phrase) {
+            $count += substr_count($text, strtolower($phrase));
+        }
+        return $count;
+    }
+
+    private function assessLanguageFlow(array $reviews): float
+    {
+        // Simple heuristic: check for varied sentence structures
+        $flowScore = 0;
+        foreach ($reviews as $review) {
+            $text = $review['review_text'] ?? $review['text'] ?? '';
+            $sentences = explode('.', $text);
+            $avgLength = array_sum(array_map('strlen', $sentences)) / max(1, count($sentences));
+            $flowScore += min(10, $avgLength / 10); // Normalize to 1-10
+        }
+        return round($flowScore / max(1, count($reviews)), 1);
+    }
+
+    private function calculateSpecificDetailsRatio(array $reviews): float
+    {
+        $detailKeywords = ['size', 'color', 'material', 'weight', 'fits', 'compared', 'price', 'shipping', 'packaging'];
+        $totalReviews = count($reviews);
+        $reviewsWithDetails = 0;
+
+        foreach ($reviews as $review) {
+            $text = strtolower($review['review_text'] ?? $review['text'] ?? '');
+            foreach ($detailKeywords as $keyword) {
+                if (strpos($text, $keyword) !== false) {
+                    $reviewsWithDetails++;
+                    break;
+                }
+            }
+        }
+
+        return round($reviewsWithDetails / max(1, $totalReviews), 2);
+    }
+
+    private function assessSentimentBalance(array $reviews): float
+    {
+        $ratings = array_column($reviews, 'rating');
+        $ratingCounts = array_count_values($ratings);
+        
+        $lowRatings = ($ratingCounts[1] ?? 0) + ($ratingCounts[2] ?? 0);
+        $highRatings = ($ratingCounts[4] ?? 0) + ($ratingCounts[5] ?? 0);
+        $totalRatings = array_sum($ratingCounts);
+        
+        // Balanced if there are some low ratings (indicates authenticity)
+        $balanceScore = ($lowRatings > 0 && $lowRatings < $totalRatings * 0.8) ? 0.8 : 0.3;
+        return $balanceScore;
+    }
+
+    private function calculateTextSimilarities(array $texts): array
+    {
+        if (count($texts) < 2) return ['average_similarity' => 0, 'high_similarity_pairs' => 0];
+        
+        $similarities = [];
+        $highSimilarityPairs = 0;
+        
+        for ($i = 0; $i < count($texts) - 1; $i++) {
+            for ($j = $i + 1; $j < count($texts); $j++) {
+                $similarity = $this->calculateSimpleSimilarity($texts[$i], $texts[$j]);
+                $similarities[] = $similarity;
+                if ($similarity > 0.8) $highSimilarityPairs++;
+            }
+        }
+        
+        return [
+            'average_similarity' => round(array_sum($similarities) / max(1, count($similarities)), 3),
+            'high_similarity_pairs' => $highSimilarityPairs,
+            'similarity_risk' => $highSimilarityPairs > (count($texts) * 0.1) ? 'high' : 'low'
+        ];
+    }
+
+    private function calculateSimpleSimilarity(string $text1, string $text2): float
+    {
+        $words1 = array_unique(str_word_count(strtolower($text1), 1));
+        $words2 = array_unique(str_word_count(strtolower($text2), 1));
+        
+        $intersection = array_intersect($words1, $words2);
+        $union = array_unique(array_merge($words1, $words2));
+        
+        return count($union) > 0 ? count($intersection) / count($union) : 0;
+    }
+
+    private function assessVocabularyHealth(float $diversity, array $similarities): string
+    {
+        if ($diversity > 0.6 && $similarities['average_similarity'] < 0.3) {
+            return 'excellent';
+        } elseif ($diversity > 0.4 && $similarities['average_similarity'] < 0.5) {
+            return 'good';
+        } elseif ($diversity > 0.2) {
+            return 'fair';
+        } else {
+            return 'poor';
+        }
+    }
+
+    private function assessManipulationRisk(array $spikes, float $velocity, int $totalReviews): string
+    {
+        $riskScore = 0;
+        $riskScore += count($spikes) * 20; // 20 points per spike
+        $riskScore += ($velocity > 5) ? 30 : 0; // High velocity penalty
+        $riskScore += ($totalReviews > 100 && $velocity > 10) ? 25 : 0; // Volume + velocity
+        
+        return $riskScore > 50 ? 'high' : ($riskScore > 25 ? 'medium' : 'low');
+    }
+
+    private function scoreToGrade(float $score): string
+    {
+        return $score >= 90 ? 'A' : ($score >= 80 ? 'B' : ($score >= 65 ? 'C' : ($score >= 50 ? 'D' : 'F')));
+    }
+
+    private function buildSummaryText(string $grade, array $pros, array $cons, array $keyword, array $timeline, array $vocabulary): string
+    {
+        $summary = "Enhanced Analysis Summary (Grade: {$grade})\n\n";
+        
+        if (!empty($pros)) {
+            $summary .= "Positive Indicators:\n";
+            foreach ($pros as $pro) {
+                $summary .= "✓ {$pro}\n";
+            }
+            $summary .= "\n";
+        }
+        
+        if (!empty($cons)) {
+            $summary .= "Areas of Concern:\n";
+            foreach ($cons as $con) {
+                $summary .= "⚠ {$con}\n";
+            }
+            $summary .= "\n";
+        }
+        
+        $summary .= "Key Metrics:\n";
+        $summary .= "• Vocabulary Diversity: {$vocabulary['diversity_score']}/10\n";
+        $summary .= "• Review Spikes: {$timeline['spike_count']}\n";
+        $summary .= "• Manipulation Risk: {$timeline['manipulation_risk']}\n";
+        
+        return $summary;
+    }
+
+    private function generateTrustRecommendation(float $score, array $pros, array $cons): string
+    {
+        if ($score >= 85) {
+            return "HIGH TRUST: Strong indicators suggest authentic reviews. Safe to rely on this product's rating.";
+        } elseif ($score >= 65) {
+            return "MODERATE TRUST: Generally positive indicators with minor concerns. Consider reviews carefully.";
+        } elseif ($score >= 55) {
+            return "LOW TRUST: Mixed signals detected. Research additional sources before purchasing.";
+        } else {
+            return "VERY LOW TRUST: Multiple red flags suggest potential manipulation. Exercise caution.";
+        }
+    }
+}
