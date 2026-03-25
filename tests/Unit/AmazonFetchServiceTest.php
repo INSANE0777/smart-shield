@@ -292,3 +292,4 @@ class AmazonFetchServiceTest extends TestCase
         parent::tearDown();
     }
 }
+

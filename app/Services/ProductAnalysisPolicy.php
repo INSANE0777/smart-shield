@@ -142,3 +142,4 @@ class ProductAnalysisPolicy
             ->whereRaw("JSON_LENGTH(CASE WHEN JSON_VALID(reviews) THEN reviews ELSE '[]' END) > 0");
     }
 }
+

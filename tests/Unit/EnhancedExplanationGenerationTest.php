@@ -280,3 +280,4 @@ class EnhancedExplanationGenerationTest extends TestCase
         $this->assertGreaterThanOrEqual(3, count($paragraphs));
     }
 }
+

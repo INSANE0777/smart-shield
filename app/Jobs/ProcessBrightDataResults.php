@@ -156,3 +156,4 @@ class ProcessBrightDataResults implements ShouldQueue
         ]);
     }
 }
+

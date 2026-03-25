@@ -109,3 +109,4 @@ class AnalysisManager extends Command
         return 0;
     }
 }
+

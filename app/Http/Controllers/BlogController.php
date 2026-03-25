@@ -130,3 +130,4 @@ class BlogController extends Controller
         return view('blog.category', compact('posts', 'category', 'categoryName', 'latestPosts', 'categories', 'tagCloud'));
     }
 }
+

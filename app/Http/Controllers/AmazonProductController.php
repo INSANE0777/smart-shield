@@ -475,3 +475,4 @@ class AmazonProductController extends Controller
             ->header('Vary', 'Accept-Encoding'); // Handle compression variations
     }
 }
+

@@ -111,3 +111,4 @@ class TriggerBrightDataScraping implements ShouldQueue
         ]);
     }
 }
+

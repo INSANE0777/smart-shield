@@ -399,3 +399,4 @@ class CategorizeProducts extends Command
         $this->line('  Total: ~$'.number_format($totalCost, 2));
     }
 }
+

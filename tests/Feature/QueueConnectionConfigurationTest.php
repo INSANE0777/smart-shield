@@ -142,3 +142,4 @@ class QueueConnectionConfigurationTest extends TestCase
         $this->assertTrue(true, 'Queue connection configuration test validates the fix is working');
     }
 }
+

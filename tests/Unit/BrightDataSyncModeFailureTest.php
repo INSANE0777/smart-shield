@@ -218,3 +218,4 @@ class BrightDataSyncModeFailureTest extends TestCase
         ]);
     }
 }
+

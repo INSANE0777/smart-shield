@@ -375,3 +375,4 @@ class BlogFunctionalityTest extends TestCase
         $response->assertSee('Sources');
     }
 }
+

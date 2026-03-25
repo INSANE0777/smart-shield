@@ -472,3 +472,4 @@ class AmazonScrapingServiceTest extends TestCase
         parent::tearDown();
     }
 }
+

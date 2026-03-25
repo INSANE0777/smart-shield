@@ -250,3 +250,4 @@ class DockerConfigurationTest extends TestCase
         $this->assertStringContainsString('MARIADB_PASSWORD: password', $content);
     }
 }
+

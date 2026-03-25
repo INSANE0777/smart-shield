@@ -178,3 +178,4 @@ class ProcessEditorialContentJobTest extends TestCase
         $this->assertEquals(['editorial-content', 'asin:'.$asinData->id], $job->tags());
     }
 }
+

@@ -190,3 +190,4 @@ class AsinDataEditorialContentTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $asinData->editorial_generated_at);
     }
 }
+

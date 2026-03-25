@@ -86,3 +86,4 @@ class ForceRescrapeDuplicateHandlingTest extends TestCase
         $this->assertEquals($asin, $newProduct->asin);
     }
 }
+

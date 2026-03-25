@@ -337,3 +337,4 @@ class OllamaProviderTest extends TestCase
         $this->assertEquals(0.0, $result['total_cost']);
     }
 }
+

@@ -407,3 +407,4 @@ class StructuredDataValidationTest extends TestCase
         $this->assertMatchesRegularExpression('/^https:\/\//', $datasetSchema['license']);
     }
 }
+

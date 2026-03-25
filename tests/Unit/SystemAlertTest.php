@@ -258,3 +258,4 @@ class SystemAlertTest extends TestCase
         $this->assertEquals(2, $pushoverData['priority']);
     }
 }
+

@@ -402,3 +402,4 @@ class BrightDataManager extends Command
         }
     }
 }
+

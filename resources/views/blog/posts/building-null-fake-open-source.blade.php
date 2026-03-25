@@ -153,7 +153,7 @@
 
       @php
         $sources = [
-          ['title' => 'SMART SHIELD UI GitHub Repository', 'url' => 'https://github.com/stardothosting/nullfake', 'publisher' => 'GitHub'],
+          ['title' => 'SMART SHIELD UI GitHub Repository', 'url' => 'https://github.com/INSANE0777/smart-shield', 'publisher' => 'GitHub'],
           ['title' => 'Laravel Framework Documentation', 'url' => 'https://laravel.com/docs', 'publisher' => 'Laravel'],
           ['title' => 'Open Source Initiative', 'url' => 'https://opensource.org/licenses/MIT', 'publisher' => 'OSI'],
         ];
@@ -175,4 +175,5 @@
   @include('partials.footer')
 </body>
 </html>
+
 

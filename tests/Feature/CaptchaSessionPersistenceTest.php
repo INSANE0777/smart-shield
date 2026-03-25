@@ -379,3 +379,4 @@ class CaptchaSessionPersistenceTest extends TestCase
         App::instance(ReviewAnalysisService::class, $mockAnalysisService);
     }
 }
+

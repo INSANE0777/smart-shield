@@ -570,3 +570,4 @@ PROMPT;
         return $response->json('choices.0.message.content', '');
     }
 }
+

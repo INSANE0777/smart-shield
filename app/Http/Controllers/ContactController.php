@@ -99,3 +99,4 @@ class ContactController extends Controller
         });
     }
 }
+

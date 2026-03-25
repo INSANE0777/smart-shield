@@ -209,3 +209,4 @@ return [
         'real_time_updates' => env('DASHBOARD_REALTIME', true),
     ],
 ];
+

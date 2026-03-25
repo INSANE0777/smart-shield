@@ -281,7 +281,7 @@
 
         <h2 class="text-2xl font-bold mt-8 mb-4">Methodology Access</h2>
         
-        <p>This research is based on our <a href="/blog/review-analysis-methodology-explained" class="text-indigo-600 hover:underline">publicly documented methodology</a>. Our complete codebase is available on <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline">GitHub</a> for verification and improvement suggestions.</p>
+        <p>This research is based on our <a href="/blog/review-analysis-methodology-explained" class="text-indigo-600 hover:underline">publicly documented methodology</a>. Our complete codebase is available on <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline">GitHub</a> for verification and improvement suggestions.</p>
 
         <p>We update this analysis quarterly as our database grows. For the most current data, analyze products directly using our <a href="{{ route('home') }}" class="text-indigo-600 hover:underline">free tool</a>.</p>
 
@@ -302,3 +302,4 @@
   @include('partials.footer')
 </body>
 </html>
+

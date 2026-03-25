@@ -162,3 +162,4 @@ class AnalysisTimestampBehaviorTest extends TestCase
         $this->assertTrue($isReanalyzed);
     }
 }
+

@@ -200,3 +200,4 @@ class OpenAIServiceAggregate implements LLMProviderInterface
         return (($inputTokens / 1000) * $inputCostPer1k) + (($outputTokens / 1000) * $outputCostPer1k);
     }
 }
+

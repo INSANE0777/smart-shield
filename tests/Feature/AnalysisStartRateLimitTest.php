@@ -44,3 +44,4 @@ class AnalysisStartRateLimitTest extends TestCase
         $rateLimited->assertStatus(429);
     }
 }
+

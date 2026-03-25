@@ -120,3 +120,4 @@ class ReviewAnalysisServiceNoReviewsRetryTest extends TestCase
         $this->assertEquals('U', $fresh->grade);
     }
 }
+

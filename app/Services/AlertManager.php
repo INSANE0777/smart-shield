@@ -446,3 +446,4 @@ class AlertManager
         return self::BUSINESS_IMPACT[$criticality] ?? self::BUSINESS_IMPACT['FALLBACK'];
     }
 }
+

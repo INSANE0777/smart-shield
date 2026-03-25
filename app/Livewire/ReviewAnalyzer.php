@@ -475,3 +475,4 @@ class ReviewAnalyzer extends Component
         LoggingService::log('Async analysis results set successfully');
     }
 }
+

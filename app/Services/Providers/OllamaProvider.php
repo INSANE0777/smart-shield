@@ -448,3 +448,4 @@ class OllamaProvider implements LLMProviderInterface
         return $flags;
     }
 }
+

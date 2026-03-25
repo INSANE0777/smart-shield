@@ -3,3 +3,4 @@
 RapidComposer          XP8LHN561DXQ54                 Unknown               msstore
 Bot Framework Composer Microsoft.BotFrameworkComposer 2.1.2   Tag: composer winget
 chsrc                  RubyMetric.chsrc               0.2.4   Tag: composer winget
+

@@ -383,3 +383,4 @@ class ProductsPageTest extends TestCase
         });
     }
 }
+

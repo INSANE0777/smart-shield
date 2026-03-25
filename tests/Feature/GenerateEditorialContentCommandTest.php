@@ -219,3 +219,4 @@ class GenerateEditorialContentCommandTest extends TestCase
         }
     }
 }
+

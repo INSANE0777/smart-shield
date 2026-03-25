@@ -9,7 +9,7 @@
   <title>Blog - Amazon Review Analysis Insights | SMART SHIELD UI</title>
   <meta name="description" content="Expert insights on fake Amazon reviews, consumer protection, AI-generated reviews, and safe online shopping strategies from the SMART SHIELD UI team." />
   <meta name="keywords" content="fake review blog, amazon shopping tips, review fraud, consumer protection, ai reviews" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -141,3 +141,4 @@
   @livewireScripts
 </body>
 </html>
+

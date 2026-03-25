@@ -262,3 +262,4 @@ class GenerateEditorialContent extends Command
         return strlen($title) > 35 ? substr($title, 0, 35).'...' : $title;
     }
 }
+

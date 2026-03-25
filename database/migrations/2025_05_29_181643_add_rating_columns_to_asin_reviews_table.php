@@ -21,3 +21,4 @@ class AddRatingColumnsToAsinReviewsTable extends Migration
         });
     }
 }
+

@@ -156,3 +156,4 @@ class ProcessPriceAnalysisJobTest extends TestCase
         $this->assertContains('asin:123', $tags);
     }
 }
+

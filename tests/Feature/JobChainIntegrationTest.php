@@ -167,3 +167,4 @@ class JobChainIntegrationTest extends TestCase
         Queue::assertNothingPushed();
     }
 }
+

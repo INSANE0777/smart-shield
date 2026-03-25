@@ -507,3 +507,4 @@ class ReviewAnalysisService
         return $reasons;
     }
 }
+

@@ -390,3 +390,4 @@ class StatusProtectionTest extends TestCase
         $this->assertEquals('completed', $finalCheck->status);
     }
 }
+

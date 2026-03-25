@@ -59,3 +59,4 @@ class Issue37CredentialsFixValidation extends TestCase
         // The session validation itself is tested in other scenarios
     }
 }
+

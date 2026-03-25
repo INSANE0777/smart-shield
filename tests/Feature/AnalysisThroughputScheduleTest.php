@@ -23,3 +23,4 @@ class AnalysisThroughputScheduleTest extends TestCase
             ->assertExitCode(0);
     }
 }
+

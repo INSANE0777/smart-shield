@@ -304,3 +304,4 @@ class AsinDataProcessingTest extends TestCase
         $this->assertNull($processingInfo['session']);
     }
 }
+

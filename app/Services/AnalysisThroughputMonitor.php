@@ -65,3 +65,4 @@ class AnalysisThroughputMonitor
         return "analysis_throughput_alert:{$windowMinutes}:{$minAnalyzed}";
     }
 }
+

@@ -409,3 +409,4 @@ class SEOServiceTest extends TestCase
         $this->assertNotContains('Price Assessment', $propertyNames);
     }
 }
+

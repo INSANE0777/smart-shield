@@ -297,3 +297,4 @@ class CookieSessionManagerTest extends TestCase
         $this->assertEquals(5, $session5['index']);
     }
 }
+

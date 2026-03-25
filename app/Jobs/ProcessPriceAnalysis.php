@@ -150,3 +150,4 @@ class ProcessPriceAnalysis implements ShouldQueue
         return ['price-analysis', 'asin:'.$this->asinDataId];
     }
 }
+

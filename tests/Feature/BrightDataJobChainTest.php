@@ -235,3 +235,4 @@ class BrightDataJobChainTest extends TestCase
         ];
     }
 }
+

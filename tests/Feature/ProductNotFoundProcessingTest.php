@@ -231,3 +231,4 @@ class ProductNotFoundProcessingTest extends TestCase
         $response->assertSee('Test Product With Slug');
     }
 }
+

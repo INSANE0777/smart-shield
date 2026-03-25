@@ -237,3 +237,4 @@ class SiteStatisticsServiceTest extends TestCase
         $this->assertEquals('1K+', $display);
     }
 }
+

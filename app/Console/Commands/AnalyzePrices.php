@@ -263,3 +263,4 @@ class AnalyzePrices extends Command
         return strlen($title) > 40 ? substr($title, 0, 40).'...' : $title;
     }
 }
+

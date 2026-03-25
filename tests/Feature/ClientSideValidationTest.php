@@ -132,3 +132,4 @@ class ClientSideValidationTest extends TestCase
         $response->assertSee('failed', false);
     }
 }
+

@@ -138,7 +138,7 @@ class InformationalPagesTest extends TestCase
 
             // Check for footer
             $response->assertSee('Built with');
-            $response->assertSee('shift8web.ca');
+            $response->assertSee('github.com/INSANE0777/smart-shield');
         }
     }
 
@@ -163,3 +163,4 @@ class InformationalPagesTest extends TestCase
         $response->assertSee('"@type": "HowToStep"', false);
     }
 }
+

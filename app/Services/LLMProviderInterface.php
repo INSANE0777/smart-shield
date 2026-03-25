@@ -29,3 +29,4 @@ interface LLMProviderInterface
      */
     public function getEstimatedCost(int $reviewCount): float;
 }
+

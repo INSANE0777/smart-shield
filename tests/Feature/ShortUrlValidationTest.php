@@ -131,3 +131,4 @@ class ShortUrlValidationTest extends TestCase
         $response->assertJsonStructure(['success']);
     }
 }
+

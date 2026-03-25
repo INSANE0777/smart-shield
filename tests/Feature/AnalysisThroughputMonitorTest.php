@@ -119,3 +119,4 @@ class AnalysisThroughputMonitorTest extends TestCase
         $this->assertFalse(Cache::has('analysis_throughput_alert:60:5'));
     }
 }
+

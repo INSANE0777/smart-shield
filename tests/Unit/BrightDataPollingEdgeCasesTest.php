@@ -255,3 +255,4 @@ class BrightDataPollingEdgeCasesTest extends TestCase
         $this->assertEquals([], $result['reviews']);
     }
 }
+

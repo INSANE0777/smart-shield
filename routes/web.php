@@ -169,3 +169,4 @@ Route::get('/analysis/{asin}/{country}', [AmazonProductController::class, 'redir
     ->name('analysis.redirect')
     ->where('asin', '[A-Z0-9]{10}')
     ->where('country', '[a-z]{2}');
+

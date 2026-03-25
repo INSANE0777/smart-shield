@@ -215,3 +215,4 @@ class ProductPageAdsenseTest extends TestCase
         $response->assertSee('Test Headline', false);
     }
 }
+

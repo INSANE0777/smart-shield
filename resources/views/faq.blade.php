@@ -9,7 +9,7 @@
   <title>FAQ - Frequently Asked Questions | SMART SHIELD UI</title>
   <meta name="description" content="Frequently asked questions about SMART SHIELD UI: pricing, accuracy, supported countries, privacy, data storage, and how to use our free Amazon review checker." />
   <meta name="keywords" content="SMART SHIELD UI faq, amazon review checker questions, fake review detector help, review analysis accuracy" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -189,7 +189,7 @@
         <div class="border-l-4 border-indigo-600 pl-4">
           <h3 class="text-lg font-semibold text-gray-900 mb-2">How do you make money if it's free?</h3>
           <p class="text-base text-gray-700">
-            SMART SHIELD UI is an open-source project built by <a href="https://shift8web.ca" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">Shift8 Web</a> to demonstrate AI capabilities and contribute to consumer protection. The tool is free as a service to the community. We don't sell data, show intrusive ads, or have premium tiers.
+            SMART SHIELD UI is an open-source project built by <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">SMART SHIELD UI Team</a> to demonstrate AI capabilities and contribute to consumer protection. The tool is free as a service to the community. We don't sell data, show intrusive ads, or have premium tiers.
           </p>
         </div>
       </div>
@@ -310,7 +310,7 @@
         <div class="border-l-4 border-green-600 pl-4">
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Do you sell data?</h3>
           <p class="text-base text-gray-700">
-            Absolutely not. We don't sell, rent, or share any data with third parties. Our open-source code is transparent - you can verify exactly what we do with data on <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>.
+            Absolutely not. We don't sell, rent, or share any data with third parties. Our open-source code is transparent - you can verify exactly what we do with data on <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>.
           </p>
         </div>
       </div>
@@ -371,7 +371,7 @@
         <div class="border-l-4 border-red-600 pl-4">
           <h3 class="text-lg font-semibold text-gray-900 mb-2">Is SMART SHIELD UI open source?</h3>
           <p class="text-base text-gray-700">
-            Yes. MIT licensed and available on <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. You can view the code, fork it, modify it, and even host your own instance.
+            Yes. MIT licensed and available on <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. You can view the code, fork it, modify it, and even host your own instance.
           </p>
         </div>
         
@@ -497,4 +497,5 @@
   @livewireScripts
 </body>
 </html>
+
 

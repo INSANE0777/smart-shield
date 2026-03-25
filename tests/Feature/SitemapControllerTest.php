@@ -426,3 +426,4 @@ class SitemapControllerTest extends TestCase
         $this->assertTrue(\Illuminate\Support\Facades\Cache::has('sitemap.analysis'));
     }
 }
+

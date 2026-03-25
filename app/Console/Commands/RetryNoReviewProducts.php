@@ -262,3 +262,4 @@ class RetryNoReviewProducts extends Command
         return strlen($text) > $length ? substr($text, 0, $length - 3).'...' : $text;
     }
 }
+

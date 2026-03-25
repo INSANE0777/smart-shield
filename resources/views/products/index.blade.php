@@ -35,7 +35,7 @@
       'url' => url('/')
     ],
     'dateModified' => now()->toIso8601String(),
-    'license' => 'https://github.com/stardothosting/nullfake/blob/main/LICENSE',
+    'license' => 'https://github.com/INSANE0777/smart-shield/blob/main/LICENSE',
     'variableMeasured' => [
       [
         '@type' => 'PropertyValue',
@@ -88,7 +88,7 @@
         <div class="bg-gray-50 rounded-lg p-4">
           <div class="text-3xl font-bold text-blue-600 mb-1">Open</div>
           <div class="text-sm text-gray-600">Transparent Methodology</div>
-          <p class="text-xs text-gray-500 mt-2">Our analysis code is <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline">open source</a> for verification.</p>
+          <p class="text-xs text-gray-500 mt-2">Our analysis code is <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline">open source</a> for verification.</p>
         </div>
       </div>
 
@@ -374,3 +374,4 @@
 
 </body>
 </html>
+

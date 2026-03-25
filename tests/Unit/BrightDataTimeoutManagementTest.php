@@ -204,3 +204,4 @@ class BrightDataTimeoutManagementTest extends TestCase
         $this->assertTrue(true);
     }
 }
+

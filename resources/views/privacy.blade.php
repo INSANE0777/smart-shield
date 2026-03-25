@@ -9,7 +9,7 @@
   <title>Privacy Policy - SMART SHIELD UI | Amazon Review Analysis Tool</title>
   <meta name="description" content="Privacy Policy for SMART SHIELD UI. Learn how we handle your data, what information we collect, and how we protect your privacy when analyzing Amazon reviews." />
   <meta name="keywords" content="SMART SHIELD UI privacy policy, data protection, amazon review checker privacy, user data policy" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -314,7 +314,7 @@
       </ul>
       
       <p class="text-base text-gray-700 mt-4">
-        View our code: <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">github.com/stardothosting/nullfake</a>
+        View our code: <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">github.com/stardothosting/nullfake</a>
       </p>
     </div>
 
@@ -342,7 +342,7 @@
       <div class="space-y-3">
         <a href="/terms" class="block text-indigo-600 hover:text-indigo-800 text-base">Terms of Service →</a>
         <a href="/about" class="block text-indigo-600 hover:text-indigo-800 text-base">About Us →</a>
-        <a href="https://github.com/stardothosting/nullfake" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View Source Code →</a>
+        <a href="https://github.com/INSANE0777/smart-shield" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View Source Code →</a>
       </div>
     </div>
 
@@ -353,3 +353,4 @@
   @livewireScripts
 </body>
 </html>
+

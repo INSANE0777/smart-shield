@@ -254,3 +254,4 @@ class PriceAnalysisServiceTest extends TestCase
         $this->assertEmpty($results);
     }
 }
+

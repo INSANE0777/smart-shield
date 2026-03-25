@@ -169,3 +169,4 @@ class RelatedProductsTest extends TestCase
         $this->assertCount(2, $viewData);
     }
 }
+

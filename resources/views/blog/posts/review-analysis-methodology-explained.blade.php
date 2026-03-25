@@ -31,7 +31,7 @@
         <p class="text-lg text-gray-600 mb-6">At SMART SHIELD UI, we believe in transparency. Unlike closed-source review analysis tools, our methodology is open for inspection. This article details exactly how we analyze reviews, what signals we look for, and how we calculate our grades.</p>
 
         <div class="bg-blue-50 border-l-4 border-blue-500 p-4 my-6">
-            <p class="text-sm text-blue-700"><strong>Open Source:</strong> Our complete codebase is available at <a href="https://github.com/stardothosting/nullfake" class="underline">github.com/stardothosting/nullfake</a>. You can verify everything described in this article by examining the source code directly.</p>
+            <p class="text-sm text-blue-700"><strong>Open Source:</strong> Our complete codebase is available at <a href="https://github.com/INSANE0777/smart-shield" class="underline">github.com/stardothosting/nullfake</a>. You can verify everything described in this article by examining the source code directly.</p>
         </div>
 
         <h2 class="text-2xl font-bold mt-8 mb-4">Analysis Pipeline Overview</h2>
@@ -263,7 +263,7 @@
             <li>Open-source contributions from the community</li>
         </ul>
 
-        <p class="mt-4">You can track our methodology changes and contribute improvements through our <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline">GitHub repository</a>.</p>
+        <p class="mt-4">You can track our methodology changes and contribute improvements through our <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline">GitHub repository</a>.</p>
 
       </div>
 
@@ -282,3 +282,4 @@
   @include('partials.footer')
 </body>
 </html>
+

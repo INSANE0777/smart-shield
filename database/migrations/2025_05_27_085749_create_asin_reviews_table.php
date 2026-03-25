@@ -35,3 +35,4 @@ class CreateAsinReviewsTable extends Migration
         Schema::dropIfExists('asin_reviews');
     }
 }
+

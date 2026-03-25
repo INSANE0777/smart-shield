@@ -9,7 +9,7 @@
   <title>How It Works - AI Review Analysis Methodology | SMART SHIELD UI</title>
   <meta name="description" content="Learn how SMART SHIELD UI uses AI, machine learning, and statistical analysis to detect fake Amazon reviews. Transparent methodology explained in detail." />
   <meta name="keywords" content="fake review detection methodology, AI review analysis, how to detect fake reviews, review authenticity algorithm" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -425,7 +425,7 @@
         </p>
         
         <p>
-          <strong>Open source transparency:</strong> Our code is publicly available on <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. You can verify exactly how we process data and what we store.
+          <strong>Open source transparency:</strong> Our code is publicly available on <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. You can verify exactly how we process data and what we store.
         </p>
       </div>
     </div>
@@ -447,7 +447,7 @@
         <a href="/fakespot-alternative" class="block text-indigo-600 hover:text-indigo-800 text-base">Compare SMART SHIELD UI to other tools →</a>
         <a href="/free-amazon-fake-review-checker" class="block text-indigo-600 hover:text-indigo-800 text-base">About our free checker →</a>
         <a href="/products" class="block text-indigo-600 hover:text-indigo-800 text-base">Browse example analyses →</a>
-        <a href="https://github.com/stardothosting/nullfake" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code →</a>
+        <a href="https://github.com/INSANE0777/smart-shield" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code →</a>
       </div>
     </div>
 
@@ -458,4 +458,5 @@
   @livewireScripts
 </body>
 </html>
+
 

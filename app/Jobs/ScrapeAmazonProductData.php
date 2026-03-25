@@ -174,3 +174,4 @@ class ScrapeAmazonProductData implements ShouldQueue
         ]);
     }
 }
+

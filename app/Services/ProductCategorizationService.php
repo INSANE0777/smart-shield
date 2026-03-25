@@ -440,3 +440,4 @@ PROMPT;
         return self::CATEGORIES;
     }
 }
+

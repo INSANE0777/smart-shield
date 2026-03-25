@@ -213,3 +213,4 @@ class TestDeepSeekChunking extends Command
         $this->info('✓ No "Array to string conversion" error - fix is working!');
     }
 }
+

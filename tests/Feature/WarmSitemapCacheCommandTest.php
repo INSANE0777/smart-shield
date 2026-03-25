@@ -118,3 +118,4 @@ class WarmSitemapCacheCommandTest extends TestCase
         $this->assertEquals(100, $urlCount);
     }
 }
+

@@ -134,3 +134,4 @@ class CacheHandlingValidationTest extends TestCase
         $response->assertSee('analyzeButton.disabled = false', false);
     }
 }
+

@@ -305,3 +305,4 @@ class RetryNoReviewProductsCommandTest extends TestCase
         Queue::assertPushed(TriggerBrightDataScraping::class, 1);
     }
 }
+

@@ -163,3 +163,4 @@ class AnalysisSessionTest extends TestCase
         $this->assertTrue($session->isFailed());
     }
 }
+

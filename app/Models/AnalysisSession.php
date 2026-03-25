@@ -113,3 +113,4 @@ class AnalysisSession extends Model
         return in_array($this->status, ['pending', 'processing']);
     }
 }
+

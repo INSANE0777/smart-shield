@@ -1598,3 +1598,4 @@ class AmazonScrapingService implements AmazonReviewServiceInterface
         return $normalized;
     }
 }
+

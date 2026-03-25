@@ -27,3 +27,4 @@ Kangaroo PostgreSQL         Taozuhong.KangarooPostgreSQL       9.2.1.301 Tag: Ma
 Kangaroo Redis              Taozuhong.KangarooRedis            9.2.1.301 Tag: MariaDB winget
 Kangaroo SQLServer          Taozuhong.KangarooSQLServer        9.2.1.301 Tag: MariaDB winget
 Kangaroo SQLite             Taozuhong.KangarooSQLite           9.2.1.301 Tag: MariaDB winget
+

@@ -170,3 +170,4 @@ class EditorialContentServiceTest extends TestCase
         $this->assertIsBool($service->isAvailable());
     }
 }
+

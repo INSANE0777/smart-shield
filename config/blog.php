@@ -30,15 +30,15 @@ return [
         'derek-armitage' => [
             'name'        => 'Derek Armitage',
             'role'        => 'Founder & Lead Developer',
-            'bio'         => 'Derek Armitage is the founder of Shift8 Web, a Toronto-based web development agency. With over 15 years of experience in software development and data analysis, Derek created SMART SHIELD UI to help consumers identify fraudulent Amazon reviews. He holds expertise in machine learning, natural language processing, and web security. Derek has previously written about e-commerce fraud detection for industry publications and regularly contributes to open-source projects focused on consumer protection.',
+            'bio'         => 'Derek Armitage is the founder of SMART SHIELD UI Team, a Toronto-based web development agency. With over 15 years of experience in software development and data analysis, Derek created SMART SHIELD UI to help consumers identify fraudulent Amazon reviews. He holds expertise in machine learning, natural language processing, and web security. Derek has previously written about e-commerce fraud detection for industry publications and regularly contributes to open-source projects focused on consumer protection.',
             'credentials' => [
                 '15+ years software development experience',
-                'Founder of Shift8 Web (Toronto)',
+                'Founder of SMART SHIELD UI Team (Toronto)',
                 'Machine learning and NLP specialist',
                 'Open source contributor',
             ],
             'links' => [
-                'website'  => 'https://shift8web.ca',
+                'website'  => 'https://github.com/INSANE0777/smart-shield',
                 'github'   => 'https://github.com/stardothosting',
                 'linkedin' => 'https://linkedin.com/in/derekarmitage',
             ],
@@ -54,7 +54,7 @@ return [
                 'Open-source methodology',
             ],
             'links' => [
-                'github' => 'https://github.com/stardothosting/nullfake',
+                'github' => 'https://github.com/INSANE0777/smart-shield',
             ],
         ],
     ],
@@ -422,3 +422,4 @@ return [
         ],
     ],
 ];
+

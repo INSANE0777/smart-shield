@@ -9,7 +9,7 @@
   <title>About Us - SMART SHIELD UI | Free Amazon Review Analysis Tool</title>
   <meta name="description" content="Learn about SMART SHIELD UI: who we are, why we built this free Amazon fake review checker, and our mission to help consumers make informed purchasing decisions." />
   <meta name="keywords" content="about SMART SHIELD UI, fake review detection company, amazon review analysis team, consumer protection tool" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -33,11 +33,11 @@
     "foundingDate": "2024",
     "founder": {
       "@@type": "Organization",
-      "name": "Shift8 Web",
-      "url": "https://shift8web.ca"
+      "name": "SMART SHIELD UI Team",
+      "url": "{{ url('/') }}"
     },
     "sameAs": [
-      "https://github.com/stardothosting/nullfake"
+      "https://github.com/INSANE0777/smart-shield"
     ],
     "contactPoint": {
       "@@type": "ContactPoint",
@@ -106,7 +106,7 @@
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Who We Are</h2>
       
       <p class="text-base text-gray-700 mb-4">
-        SMART SHIELD UI is developed and maintained by <a href="https://shift8web.ca" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">Shift8 Web</a>, a Toronto-based web development agency specializing in AI integration, custom web applications, and open-source solutions.
+        SMART SHIELD UI is an open-source project dedicated to AI integration, data analysis, and providing transparent tools for consumer protection.
       </p>
       
       <div class="grid md:grid-cols-2 gap-6 mb-6">
@@ -162,7 +162,7 @@
       <h2 class="text-2xl font-bold text-gray-900 mb-6">Open Source Commitment</h2>
       
       <p class="text-base text-gray-700 mb-4">
-        SMART SHIELD UI is released under the MIT License and available on <a href="https://github.com/stardothosting/nullfake" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. This means:
+        SMART SHIELD UI is released under the MIT License and available on <a href="https://github.com/INSANE0777/smart-shield" class="text-indigo-600 hover:underline" target="_blank" rel="noopener">GitHub</a>. This means:
       </p>
       
       <ul class="list-disc pl-6 text-base text-gray-700 space-y-2 mb-4">
@@ -250,8 +250,7 @@
       <div class="space-y-3">
         <a href="/how-it-works" class="block text-indigo-600 hover:text-indigo-800 text-base">How our AI analysis works →</a>
         <a href="/faq" class="block text-indigo-600 hover:text-indigo-800 text-base">Frequently asked questions →</a>
-        <a href="/blog" class="block text-indigo-600 hover:text-indigo-800 text-base">Read our blog →</a>
-        <a href="https://github.com/stardothosting/nullfake" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
+        <a href="https://github.com/INSANE0777/smart-shield" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
         <a href="{{ route('home') }}" class="block text-indigo-600 hover:text-indigo-800 text-base">Try the analyzer →</a>
       </div>
     </div>
@@ -263,4 +262,5 @@
   @livewireScripts
 </body>
 </html>
+
 

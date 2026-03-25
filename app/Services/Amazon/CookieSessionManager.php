@@ -339,3 +339,4 @@ class CookieSessionManager
         return $this->cookieSessions[$index] ?? null;
     }
 }
+

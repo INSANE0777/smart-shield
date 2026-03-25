@@ -63,7 +63,7 @@
                 'url' => $baseUrl.'/img/nullfake.svg',
             ],
             'sameAs' => [
-                'https://github.com/stardothosting/nullfake',
+                'https://github.com/INSANE0777/smart-shield',
             ],
         ],
         'datePublished' => $publishedIso,
@@ -135,3 +135,4 @@
 @endif
 
 <script type="application/ld+json">@json($jsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)</script>
+

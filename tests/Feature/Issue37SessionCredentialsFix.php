@@ -94,3 +94,4 @@ class Issue37SessionCredentialsFix extends TestCase
         $this->assertTrue($response->json('success'));
     }
 }
+

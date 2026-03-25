@@ -14,3 +14,4 @@ return [
         'enabled' => env('EZOIC_ENABLED', false),
     ],
 ];
+

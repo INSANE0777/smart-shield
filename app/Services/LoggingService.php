@@ -97,3 +97,4 @@ class LoggingService
         self::log("Progress: {$step} - {$message}");
     }
 }
+

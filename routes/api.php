@@ -53,3 +53,4 @@ Route::prefix('extension')->name('api.extension.')
 // Some extension versions call this URL pattern
 Route::get('/chrome-extension/check-analysis/{asin}/{country}', [App\Http\Controllers\ExtensionController::class, 'getAnalysisStatus'])
     ->name('api.chrome-extension.check-analysis');
+

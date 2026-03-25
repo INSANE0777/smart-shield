@@ -320,3 +320,4 @@
   @livewireScripts
 </body>
 </html>
+

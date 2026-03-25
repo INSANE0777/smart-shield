@@ -180,3 +180,4 @@ class OllamaProviderAggregate implements LLMProviderInterface
         return 0.0; // Ollama is free
     }
 }
+

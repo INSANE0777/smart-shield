@@ -468,7 +468,7 @@
         <a href="/how-it-works" class="block text-indigo-600 hover:text-indigo-800 text-base">Quick overview: How It Works →</a>
         <a href="/faq" class="block text-indigo-600 hover:text-indigo-800 text-base">Frequently asked questions →</a>
         <a href="/blog" class="block text-indigo-600 hover:text-indigo-800 text-base">Read our blog →</a>
-        <a href="https://github.com/stardothosting/nullfake" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
+        <a href="https://github.com/INSANE0777/smart-shield" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
       </div>
     </div>
 
@@ -479,3 +479,4 @@
   @livewireScripts
 </body>
 </html>
+

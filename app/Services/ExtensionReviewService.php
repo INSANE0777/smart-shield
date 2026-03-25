@@ -300,3 +300,4 @@ class ExtensionReviewService
         return $result;
     }
 }
+

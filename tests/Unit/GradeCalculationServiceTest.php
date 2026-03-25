@@ -168,3 +168,4 @@ class GradeCalculationServiceTest extends TestCase
         $this->assertEquals('F', GradeCalculationService::calculateGrade(100));
     }
 }
+

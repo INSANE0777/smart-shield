@@ -181,3 +181,4 @@ class StartAnalysisWorkers extends Command
         return 0;
     }
 }
+

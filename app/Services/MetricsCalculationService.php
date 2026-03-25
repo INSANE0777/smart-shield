@@ -310,3 +310,4 @@ class MetricsCalculationService
         return $explanation;
     }
 }
+

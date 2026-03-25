@@ -217,3 +217,4 @@ class AsinDataFactory extends Factory
         ]);
     }
 }
+

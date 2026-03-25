@@ -199,3 +199,4 @@ class ProductAnalysisPolicyTest extends TestCase
         $this->assertEquals($displayableProduct->id, $results->first()->id);
     }
 }
+

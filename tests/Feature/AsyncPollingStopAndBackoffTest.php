@@ -30,3 +30,4 @@ class AsyncPollingStopAndBackoffTest extends TestCase
         $this->assertStringContainsString('lastProgressSignature', $html);
     }
 }
+

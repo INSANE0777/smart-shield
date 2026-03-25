@@ -326,3 +326,4 @@ class AmazonAjaxReviewServiceTest extends TestCase
         ';
     }
 }
+

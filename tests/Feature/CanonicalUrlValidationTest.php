@@ -447,3 +447,4 @@ class CanonicalUrlValidationTest extends TestCase
         );
     }
 }
+

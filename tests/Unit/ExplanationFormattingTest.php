@@ -136,3 +136,4 @@ class ExplanationFormattingTest extends TestCase
         $response->assertSee('more & symbols');
     }
 }
+

@@ -90,3 +90,4 @@ class ProductCarousel extends Component
         return view('livewire.product-carousel');
     }
 }
+

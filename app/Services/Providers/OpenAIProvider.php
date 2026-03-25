@@ -51,3 +51,4 @@ class OpenAIProvider implements LLMProviderInterface
         return $inputCost + $outputCost;
     }
 }
+

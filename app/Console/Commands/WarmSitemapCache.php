@@ -89,3 +89,4 @@ class WarmSitemapCache extends Command
         }
     }
 }
+

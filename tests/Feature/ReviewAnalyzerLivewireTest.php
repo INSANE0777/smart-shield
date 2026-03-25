@@ -524,3 +524,4 @@ class ReviewAnalyzerLivewireTest extends TestCase
         App::instance(ReviewAnalysisService::class, $mockAnalysisService);
     }
 }
+

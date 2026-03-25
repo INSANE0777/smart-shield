@@ -102,3 +102,4 @@ class SiteStatisticsService
         return Cache::has(self::CACHE_KEY_PRODUCTS_ANALYZED);
     }
 }
+

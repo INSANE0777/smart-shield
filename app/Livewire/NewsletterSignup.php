@@ -133,3 +133,4 @@ class NewsletterSignup extends Component
         return view('livewire.newsletter-signup');
     }
 }
+

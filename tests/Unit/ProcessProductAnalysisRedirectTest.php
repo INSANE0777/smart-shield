@@ -215,3 +215,4 @@ class ProcessProductAnalysisRedirectTest extends TestCase
         $this->assertStringNotContainsString('/amazon/us/B08NOSLUG/', $redirectUrl); // No trailing slash for slug
     }
 }
+

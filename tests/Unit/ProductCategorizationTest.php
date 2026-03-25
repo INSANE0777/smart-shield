@@ -314,3 +314,4 @@ class ProductCategorizationTest extends TestCase
         $this->assertEquals($fourShared->id, $relatedVeryStrict->first()->id);
     }
 }
+

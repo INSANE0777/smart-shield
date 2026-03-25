@@ -146,3 +146,4 @@ class AnalyzePricesCommandTest extends TestCase
             ->assertExitCode(0);
     }
 }
+

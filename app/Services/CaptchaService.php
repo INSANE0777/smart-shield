@@ -60,3 +60,4 @@ class CaptchaService
         return $data['success'] ?? false;
     }
 }
+

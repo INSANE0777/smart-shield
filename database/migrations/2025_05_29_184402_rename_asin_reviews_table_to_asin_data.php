@@ -14,3 +14,4 @@ return new class() extends Migration {
         Schema::rename('asin_data', 'asin_reviews');
     }
 };
+

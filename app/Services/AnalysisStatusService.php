@@ -152,3 +152,4 @@ class AnalysisStatusService
         return 'processing';
     }
 }
+

@@ -453,3 +453,4 @@ class SitemapController extends Controller
         $controller->analysis();
     }
 }
+

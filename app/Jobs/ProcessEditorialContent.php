@@ -151,3 +151,4 @@ class ProcessEditorialContent implements ShouldQueue
         return ['editorial-content', 'asin:'.$this->asinDataId];
     }
 }
+

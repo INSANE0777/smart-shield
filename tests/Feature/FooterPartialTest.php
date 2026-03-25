@@ -52,7 +52,7 @@ class FooterPartialTest extends TestCase
 
         // Check that footer content is present even in 404 response
         $response->assertSee('built with');
-        $response->assertSee('shift8 web');
+        $response->assertSee('SMART SHIELD UI Team');
         $response->assertSee('atomic edge firewall');
     }
 
@@ -92,13 +92,13 @@ class FooterPartialTest extends TestCase
 
         // Check for all footer elements
         $response->assertSee('Built with');
-        $response->assertSee('Shift8 Web');
-        $response->assertSee('https://shift8web.ca');
+        $response->assertSee('SMART SHIELD UI Team');
+        $response->assertSee('https://github.com/INSANE0777/smart-shield');
         $response->assertSee('Atomic Edge Firewall');
         $response->assertSee('https://atomicedge.io');
         $response->assertSee('Analyzed Products');
         $response->assertSee('GitHub');
-        $response->assertSee('https://github.com/stardothosting/nullfake');
+        $response->assertSee('https://github.com/INSANE0777/smart-shield');
         $response->assertSee('MIT License');
         $response->assertSee('Privacy Policy');
         $response->assertSee('Contact');
@@ -153,11 +153,11 @@ class FooterPartialTest extends TestCase
 
         // Count occurrences of key footer elements to ensure no duplication
         // Note: Case-insensitive check for footer elements
-        $shiftWebCount = substr_count($content, 'shift8 web');
+        $shiftWebCount = substr_count($content, 'SMART SHIELD UI Team');
         $atomicEdgeCount = substr_count($content, 'atomic edge firewall');
-        $githubLinkCount = substr_count($content, 'https://github.com/stardothosting/nullfake');
+        $githubLinkCount = substr_count($content, 'https://github.com/INSANE0777/smart-shield');
 
-        $this->assertGreaterThanOrEqual(1, $shiftWebCount, 'Shift8 Web should appear at least once');
+        $this->assertGreaterThanOrEqual(1, $shiftWebCount, 'SMART SHIELD UI Team should appear at least once');
         $this->assertEquals(1, $atomicEdgeCount, 'Atomic Edge Firewall should appear exactly once');
         $this->assertGreaterThanOrEqual(1, $githubLinkCount, 'GitHub link should appear at least once');
     }
@@ -168,7 +168,7 @@ class FooterPartialTest extends TestCase
     private function assertFooterContentPresent($response)
     {
         $response->assertSee('Built with');
-        $response->assertSee('Shift8 Web');
+        $response->assertSee('SMART SHIELD UI Team');
         $response->assertSee('Atomic Edge Firewall');
         $response->assertSee('Analyzed Products');
         $response->assertSee('GitHub');
@@ -181,3 +181,4 @@ class FooterPartialTest extends TestCase
         $response->assertSee('Fakespot Alternative');
     }
 }
+

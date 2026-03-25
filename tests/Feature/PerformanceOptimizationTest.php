@@ -220,3 +220,4 @@ class PerformanceOptimizationTest extends TestCase
         return json_encode($scores);
     }
 }
+

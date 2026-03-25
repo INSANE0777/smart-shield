@@ -360,3 +360,4 @@ class AmazonAffiliateLinkTest extends TestCase
         $response->assertSee(self::AFFILIATE_DISCLOSURE);
     }
 }
+

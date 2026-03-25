@@ -162,3 +162,4 @@ class AmazonReviewServiceFactoryIsolatedTest extends TestCase
         $this->assertContains('bd', $brightdata['env_values']);
     }
 }
+

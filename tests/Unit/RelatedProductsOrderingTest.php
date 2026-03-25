@@ -103,3 +103,4 @@ class RelatedProductsOrderingTest extends TestCase
         );
     }
 }
+

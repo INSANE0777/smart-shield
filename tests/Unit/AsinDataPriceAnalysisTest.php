@@ -127,3 +127,4 @@ class AsinDataPriceAnalysisTest extends TestCase
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $asinData->price_analyzed_at);
     }
 }
+

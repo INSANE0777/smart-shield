@@ -241,3 +241,4 @@ class LoggingServiceTest extends TestCase
         $this->assertEquals('The review service is temporarily unavailable due to network configuration issues. Please try again in a few minutes.', $result);
     }
 }
+

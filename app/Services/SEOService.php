@@ -876,3 +876,4 @@ class SEOService
         return $domains[strtolower($country)] ?? 'com';
     }
 }
+

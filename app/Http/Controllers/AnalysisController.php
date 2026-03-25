@@ -185,3 +185,4 @@ class AnalysisController extends Controller
         // This method is kept for API compatibility but does nothing
     }
 }
+

@@ -561,3 +561,4 @@ class AsinDataModelTest extends TestCase
         $this->assertEquals('asin_data', $asinData->getTable());
     }
 }
+

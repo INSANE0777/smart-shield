@@ -600,3 +600,4 @@ class CompleteAnalysisWorkflowTest extends TestCase
         $this->assertEquals('B', $analyzedProduct->grade);
     }
 }
+

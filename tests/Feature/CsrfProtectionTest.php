@@ -246,3 +246,4 @@ class CsrfProtectionTest extends TestCase
         }
     }
 }
+

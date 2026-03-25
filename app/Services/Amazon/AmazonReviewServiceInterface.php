@@ -35,3 +35,4 @@ interface AmazonReviewServiceInterface
      */
     public function fetchReviews(string $asin, string $country = 'us'): array;
 }
+

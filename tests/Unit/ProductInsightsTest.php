@@ -183,3 +183,4 @@ class ProductInsightsTest extends TestCase
         $this->assertNull($asinData->fresh()->product_insights);
     }
 }
+

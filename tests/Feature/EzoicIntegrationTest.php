@@ -64,3 +64,4 @@ class EzoicIntegrationTest extends TestCase
         $response->assertSee(self::HEADER_SCRIPT, false);
     }
 }
+

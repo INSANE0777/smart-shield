@@ -758,3 +758,4 @@ class AmazonAjaxReviewService implements AmazonReviewServiceInterface
         ];
     }
 }
+

@@ -119,3 +119,4 @@ class UrlExpansionTest extends TestCase
         $response->assertSee('X-CSRF-TOKEN', false);
     }
 }
+

@@ -248,3 +248,4 @@ class ReviewAnalysisServiceIntegrationTest extends TestCase
         $this->assertInstanceOf(BrightDataScraperService::class, $internalService);
     }
 }
+

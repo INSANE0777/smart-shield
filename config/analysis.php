@@ -87,3 +87,4 @@ return [
         'complete'           => ['weight' => 100, 'message' => 'Analysis complete!'],
     ],
 ];
+

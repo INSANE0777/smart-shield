@@ -182,3 +182,4 @@ class AlertServiceTest extends TestCase
         $this->assertEquals('siren', AlertType::SECURITY_ALERT->getDefaultSound());
     }
 }
+

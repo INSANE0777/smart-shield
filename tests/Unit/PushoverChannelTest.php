@@ -141,3 +141,4 @@ class PushoverChannelTest extends TestCase
         $this->assertEquals('test-fake', $result->json()['request']);
     }
 }
+

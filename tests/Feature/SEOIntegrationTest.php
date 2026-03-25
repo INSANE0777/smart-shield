@@ -419,3 +419,4 @@ class SEOIntegrationTest extends TestCase
         // So we just check that some cache control is present
     }
 }
+

@@ -197,3 +197,4 @@ class CaptchaServiceTest extends TestCase
         $this->assertFalse($result);
     }
 }
+

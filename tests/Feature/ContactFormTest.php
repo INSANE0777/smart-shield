@@ -318,3 +318,4 @@ class ContactFormTest extends TestCase
         $this->assertTrue(true); // Content sanitized by strip_tags in controller
     }
 }
+

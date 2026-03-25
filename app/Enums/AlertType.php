@@ -105,3 +105,4 @@ enum AlertType: string
         };
     }
 }
+

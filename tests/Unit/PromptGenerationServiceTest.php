@@ -245,3 +245,4 @@ class PromptGenerationServiceTest extends TestCase
         $this->assertStringContainsString('R8|V|?★|', $result['prompt']);
     }
 }
+

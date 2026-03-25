@@ -907,3 +907,4 @@ class ExtensionApiTest extends TestCase
             ]);
     }
 }
+

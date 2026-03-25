@@ -366,3 +366,4 @@ class AlertService
         return true;
     }
 }
+

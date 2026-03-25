@@ -182,3 +182,4 @@ class AnalysisStatusServiceTest extends TestCase
         $this->assertEquals('processing', AnalysisStatusService::getDisplayStatus($processing));
     }
 }
+

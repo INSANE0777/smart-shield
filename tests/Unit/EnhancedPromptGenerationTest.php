@@ -125,3 +125,4 @@ class EnhancedPromptGenerationTest extends TestCase
         $this->assertStringContainsString('product_insights', $chatResult['user']);
     }
 }
+

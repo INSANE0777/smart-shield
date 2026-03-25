@@ -239,3 +239,4 @@ class NewsletterController extends Controller
         }
     }
 }
+

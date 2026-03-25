@@ -183,3 +183,4 @@ class GenerateSitemap extends Command
         }
     }
 }
+

@@ -9,7 +9,7 @@
   <title>{{ $seoData['meta_title'] ?? 'SMART SHIELD UI - Amazon Review Analysis' }}</title>
   <meta name="description" content="{{ $seoData['meta_description'] ?? 'AI-powered Amazon review analysis across 14+ countries. Detect fake reviews instantly.' }}" />
   <meta name="keywords" content="{{ $seoData['keywords'] ?? 'amazon review analysis, fake review detector, ai review analysis' }}" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -258,3 +258,4 @@
   @livewireScripts
 </body>
 </html>
+

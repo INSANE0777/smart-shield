@@ -240,3 +240,4 @@ class LLMProviderIntegrationTest extends TestCase
         $this->assertEquals(40, $score);
     }
 }
+

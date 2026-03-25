@@ -9,7 +9,7 @@
   <title>Fakespot Alternative - Free & Open Source | SMART SHIELD UI</title>
   <meta name="description" content="Looking for a Fakespot alternative? SMART SHIELD UI is a free, open-source Amazon review analyzer with no sign-up required. Compare features, pricing, and capabilities." />
   <meta name="keywords" content="fakespot alternative, free review checker, reviewmeta alternative, amazon review analyzer comparison" />
-  <meta name="author" content="shift8 web" />
+  <meta name="author" content="SMART SHIELD UI Team" />
   
   <!-- SEO and Robots Configuration -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -406,7 +406,7 @@
         <a href="/how-it-works" class="block text-indigo-600 hover:text-indigo-800 text-base">How our AI analysis methodology works →</a>
         <a href="/faq" class="block text-indigo-600 hover:text-indigo-800 text-base">Frequently asked questions →</a>
         <a href="/free-amazon-fake-review-checker" class="block text-indigo-600 hover:text-indigo-800 text-base">More about our free checker →</a>
-        <a href="https://github.com/stardothosting/nullfake" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
+        <a href="https://github.com/INSANE0777/smart-shield" class="block text-indigo-600 hover:text-indigo-800 text-base" target="_blank" rel="noopener">View source code on GitHub →</a>
       </div>
     </div>
 
@@ -417,4 +417,5 @@
   @livewireScripts
 </body>
 </html>
+
 

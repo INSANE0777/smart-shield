@@ -185,3 +185,4 @@ class PushoverMessage
         return $data;
     }
 }
+

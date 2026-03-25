@@ -165,3 +165,4 @@ class SiteStatisticsIntegrationTest extends TestCase
         $this->assertEquals(10, $response->viewData('productsAnalyzedCount'));
     }
 }
+
